@@ -1,0 +1,28 @@
+{
+  "name": "rn-zalo",
+  "version": "2.0.4",
+  "description": "A React Native Module for Zalo SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest -watch",
+    "test:coverage": "jest -coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phithu/rn-zalo.git"
+  },
+  "keywords": [
+    "react-native",
+    "rn-zalo",
+    "react-native-zalo",
+    "zalo"
+  ],
+  "author": "Phi Thu",
+  "license": "MIT",
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "homepage": "https://github.com/phithu/rn-zalo",
+  "devDependencies": {}
+}

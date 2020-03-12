@@ -1,14 +1,9 @@
+example/
+
 
 # OSX
 #
 .DS_Store
-
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
-  
 
 # Xcode
 #
@@ -28,23 +23,8 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
-      
 
-# Android/IntelliJ
+# node.js
 #
-build/
-.idea
-.gradle
-local.properties
-*.iml
-
-# BUCK
-buck-out/
-\.buckd/
-*.keystore
-      
-#CocoaPods
-Pods/
-
-*.lock
+node_modules/
+npm-debug.log
