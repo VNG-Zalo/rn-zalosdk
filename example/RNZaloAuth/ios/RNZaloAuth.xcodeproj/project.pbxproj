@@ -12,7 +12,6 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		6460D31D7725485587789781 /* libRNZalo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8C3F7CF72B74D4BB9B50BE5 /* libRNZalo.a */; };
 		AD09A73B380CE4D07711CC72 /* libPods-RNZaloAuth.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D3B6643B26272E1B14414C /* libPods-RNZaloAuth.a */; };
 		D1CDCD68BBF1DAE99132E7E8 /* libPods-RNZaloAuthTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A87C404099E96E686501862C /* libPods-RNZaloAuthTests.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
@@ -26,13 +25,6 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = RNZaloAuth;
 		};
-		1EA8764A225C77370058C995 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0CDDEC72EA7E4ADEBE2174CD /* RNZalo.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNZalo;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +32,6 @@
 		00E356EE1AD99517003FC87E /* RNZaloAuthTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RNZaloAuthTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* RNZaloAuthTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNZaloAuthTests.m; sourceTree = "<group>"; };
-		0CDDEC72EA7E4ADEBE2174CD /* RNZalo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNZalo.xcodeproj; path = "../node_modules/rn-zalo/ios/RNZalo.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* RNZaloAuth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RNZaloAuth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RNZaloAuth/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RNZaloAuth/AppDelegate.m; sourceTree = "<group>"; };
@@ -51,7 +42,6 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9586DBD5B4F0488DE0C072E3 /* Pods-RNZaloAuthTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNZaloAuthTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNZaloAuthTests/Pods-RNZaloAuthTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A87C404099E96E686501862C /* libPods-RNZaloAuthTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNZaloAuthTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B8C3F7CF72B74D4BB9B50BE5 /* libRNZalo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNZalo.a; sourceTree = "<group>"; };
 		C4D59DE3B22F1E557968CD4E /* Pods-RNZaloAuth.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNZaloAuth.release.xcconfig"; path = "Pods/Target Support Files/Pods-RNZaloAuth/Pods-RNZaloAuth.release.xcconfig"; sourceTree = "<group>"; };
 		DA7E5D5EE1D625BEA434A4D2 /* Pods-RNZaloAuth.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNZaloAuth.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNZaloAuth/Pods-RNZaloAuth.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -74,7 +64,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
-				6460D31D7725485587789781 /* libRNZalo.a in Frameworks */,
 				AD09A73B380CE4D07711CC72 /* libPods-RNZaloAuth.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -121,14 +110,6 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		1EA87647225C77370058C995 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1EA8764B225C77370058C995 /* libRNZalo.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,7 +125,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				0CDDEC72EA7E4ADEBE2174CD /* RNZalo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -259,10 +239,6 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = 1EA87647225C77370058C995 /* Products */;
-					ProjectRef = 0CDDEC72EA7E4ADEBE2174CD /* RNZalo.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -273,13 +249,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1EA8764B225C77370058C995 /* libRNZalo.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNZalo.a;
-			remoteRef = 1EA8764A225C77370058C995 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -425,7 +394,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -458,7 +426,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",

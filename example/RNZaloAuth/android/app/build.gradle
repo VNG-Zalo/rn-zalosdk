@@ -198,11 +198,9 @@ dependencies {
     implementation "com.zing.zalo.zalosdk.kotlin:openapi:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:analytics:$sdkVersion"
 
-    implementation project(':rn-zalo')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:0.20.1"  // From node_modules
-    androidTestImplementation('com.wix:detox:+') { transitive = true }
     androidTestImplementation 'junit:junit:4.12'
        if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
