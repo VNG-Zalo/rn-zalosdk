@@ -11,6 +11,7 @@ import android.util.Base64;
 import android.util.Log;
 
 
+import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.swmansion.rnscreens.RNScreensPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
@@ -35,13 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-            return Arrays.<ReactPackage>asList(
-                    new MainReactPackage(),
-                    new RNScreensPackage(),
-                    new ReanimatedPackage(),
-                    new RNGestureHandlerPackage(),
-                    new RNZaloPackage()
-            );
+            return new PackageList(this).getPackages();
         }
 
         @Override
