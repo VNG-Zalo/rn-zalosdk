@@ -11,7 +11,13 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.zing.zalo.zalosdk.kotlin.analytics.EventStorage;
+import com.zing.zalo.zalosdk.kotlin.analytics.model.Event;
+import com.zing.zalo.zalosdk.kotlin.core.devicetrackingsdk.DeviceTracking;
+import com.zing.zalo.zalosdk.kotlin.core.helper.AppInfo;
+import com.zing.zalo.zalosdk.kotlin.core.settings.SettingsManager;
 import com.zing.zalo.zalosdk.kotlin.oauth.IAuthenticateCompleteListener;
 import com.zing.zalo.zalosdk.kotlin.oauth.LoginVia;
 import com.zing.zalo.zalosdk.kotlin.oauth.ZaloSDK;
@@ -282,12 +288,12 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             errorCallback.invoke("Not authentication");
             return -1;
         }
-        FeedData feed_data = new FeedData(message,"", link, new ArrayList<String>(), "","");
+        FeedData feed_data = new FeedData(message, "", link, new ArrayList<String>(), "", "");
         this.mOpenAPI.shareMessage(feed_data, new ZaloPluginCallback() {
             @Override
             public void onResult(boolean isSuccess, int errCode, @Nullable String messageStr, @Nullable String jsonStr) {
                 if (!isSuccess) {
-                   errorCallback.invoke(errCode, messageStr);
+                    errorCallback.invoke(errCode, messageStr);
                 }
                 try {
                     WritableMap user = UtilService.convertJsonToMap(new JSONObject(jsonStr));
@@ -307,7 +313,7 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             errorCallback.invoke("Not authentication");
             return -1;
         }
-        FeedData feed_data = new FeedData(message,"", link, new ArrayList<String>(), "","");
+        FeedData feed_data = new FeedData(message, "", link, new ArrayList<String>(), "", "");
         this.mOpenAPI.shareFeed(feed_data, new ZaloPluginCallback() {
             @Override
             public void onResult(boolean isSuccess, int errCode, @Nullable String messageStr, @Nullable String jsonStr) {
@@ -323,6 +329,42 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                 }
             }
         });
+        return 0;
+    }
+
+    @ReactMethod
+    public int getSettings(ReadableMap params, final Callback successCallback, final Callback errorCallback) {
+        try {
+            SettingsManager mgr = SettingsManager.Companion.getInstance();
+            WritableMap result = Arguments.createMap();
+            result.putDouble("wakeup_interval", mgr.getWakeUpInterval());
+            result.putBoolean("is_login_via_browser", mgr.isLoginViaBrowser());
+            result.putDouble("expire_date", mgr.getExpiredTime());
+            result.putBoolean("is_use_webview_login_zalo", mgr.isUseWebViewLoginZalo());
+            result.putString("sdk_version", AppInfo.getInstance().getSDKVersion());
+            result.putString("app_id", getReactApplicationContext().getString(R.string.appID));
+            successCallback.invoke(result);
+        } catch (Exception e) {
+            errorCallback.invoke(e);
+        }
+        return 0;
+    }
+
+    @ReactMethod
+    public int getDeviceID(ReadableMap params, final Callback successCallback, final Callback errorCallback) {
+        try {
+            DeviceTracking devcie_tracking = DeviceTracking.Companion.getInstance();
+            WritableMap result = Arguments.createMap();
+            result.putString("device_id", devcie_tracking.getDeviceId());
+            WritableArray arr_events = Arguments.createArray();
+            for (Event e : EventStorage.events) {
+                arr_events.pushString(e.toString());
+            }
+            result.putArray("events", arr_events);
+            successCallback.invoke(result);
+        } catch (Exception e) {
+            errorCallback.invoke(e);
+        }
         return 0;
     }
 

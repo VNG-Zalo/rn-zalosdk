@@ -216,6 +216,34 @@ class RNZaloSDK {
       );
     });
   }
+
+  static getSettings(args = {}) {
+    return new Promise((resolve, reject) => {
+      RNZalo.getSettings(
+        args,
+        data => {
+          resolve(data);
+        },
+        e => {
+          reject(e);
+        }
+      );
+    });
+  }
+
+  static getDeviceID(args = {}) {
+    return new Promise((resolve, reject) => {
+      RNZalo.getDeviceID(
+        args,
+        data => {
+          resolve(data);
+        },
+        e => {
+          reject(e);
+        }
+      );
+    });
+  }
 }
 
 export default RNZaloSDK;

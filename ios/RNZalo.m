@@ -52,7 +52,7 @@ RCT_EXPORT_METHOD(loginWithType:(NSInteger) type
                                                          handler:^(ZOOauthResponseObject * response) {
             if([response isSucess]) {
                 NSString * oauthCode = response.oauthCode;
-                successCallback(@[@{ "oauth_code": oauthCode}]);
+                successCallback(@[@{ @"oauth_code": oauthCode}]);
             } else if(response.errorCode != kZaloSDKErrorCodeUserCancel) {
                 // convert int or long to string
                 NSError * error  = [
@@ -266,6 +266,29 @@ RCT_EXPORT_METHOD(shareFeed:(NSString*) str_message
             }
         }];
     });
+    
+}
+
+RCT_EXPORT_METHOD(getSettings:(NSDictionary*) args
+                  successCallback: (RCTResponseSenderBlock) successCallback
+                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+    //    successCallback(@[response]);
+    failureCallback(
+                    [[NSError alloc] initWithDomain:@"Zalo Oauth"
+                                               code: -1
+                                           userInfo:@{@"message": @"Method not emplements"}]
+                    );
+}
+
+RCT_EXPORT_METHOD(getDeviceID:(NSDictionary*) args
+                  successCallback: (RCTResponseSenderBlock) successCallback
+                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+    //    successCallback(@[response]);
+    failureCallback(
+                    [[NSError alloc] initWithDomain:@"Zalo Oauth"
+                                               code:-1
+                                           userInfo:@{@"message": @"Method not emplements"}]
+                    );
 }
 
 @end

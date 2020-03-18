@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   RNZalo
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://developers.zalo.me/docs"
   s.license      = "MIT"
   s.author             = { "author" => "duydb2@vng.com.vn" }
   s.platform     = :ios, "7.0"
