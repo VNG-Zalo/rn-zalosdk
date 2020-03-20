@@ -1,23 +1,23 @@
 // import 'react-native-gesture-handler';
 // import { enableScreens } from 'react-native-screens';
 // enableScreens();
-import React, { Component } from 'react';
+import React, { Component, useReducer, useState, useContext, useEffect } from 'react';
 import { Router, Scene, Actions } from 'react-native-router-flux';
-import { Text, TouchableOpacity, Linking, View, Alert } from 'react-native';
+import { Image, Text, TouchableOpacity, Linking, View, Alert } from 'react-native';
 import OauthScreen from './OauthScreen';
 import ProfileScreen from './ProfileScreen';
 import PluginsScreen from './PluginsScreen';
 import TrackingScreen from './TrackingScreen';
 import SettingsScreen from './SettingsScreen';
 import RNZaloSDK from 'rn-zalo';
+import Modal, { ModalTitle, ModalButton, ModalContent, ModalFooter } from 'react-native-modals';
 
-class AppScreen extends Component {
-    constructor(props) {
-        super(props);
-    }
+import { LoginProvider, LoginContext } from './Context/Login';
+import LogStateView from './components/LogStateView';
 
-    render() {
-        return (
+const AppScreen = props => {
+    return (
+        <LoginProvider>
             <Router>
                 <Scene key="root">
                     <Scene key="mainscreen" component={MainScreen} title="ZaloSDK Demo" />
@@ -28,125 +28,225 @@ class AppScreen extends Component {
                     <Scene key="settings" component={SettingsScreen} title="Settings Demo" />
                 </Scene>
             </Router>
-        );
-    }
-}
+        </LoginProvider>
+    );
+};
 
-class MainScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+const ButtonLogged = props => {
+    const [visible, setVisible] = useState(false);
+    return (
+        <LoginContext.Consumer>
+            {([{ user }, setState]) => (
+                <TouchableOpacity
+                    key="oauth"
+                    style={props.style}
+                    testID="btn_oauth"
+                    accessibilityLabel="btn_oauth"
+                    onPress={() => {
+                        setVisible(true);
+                    }}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignContext: 'center',
+                        }}
+                    >
+                        <Text
+                            style={{
+                                ...styles.textStyle,
+                                textAlign: 'center',
+                                alignSelf: 'center',
+                                flex: 1,
+                            }}
+                        >
+                            Profile Info
+                        </Text>
+                        {user['picture'] ? (
+                            <Image style={{ flex: 0.2 }} source={{ uri: user.picture.data.url }} />
+                        ) : (
+                            <Text>No picture</Text>
+                        )}
+                    </View>
+                    <Modal
+                        height={0.3}
+                        width={0.9}
+                        rounded
+                        actionsBordered
+                        onTouchOutside={() => {
+                            setVisible(false);
+                        }}
+                        modalTitle={<ModalTitle title="User profile" align="left" />}
+                        visible={visible}
+                        footer={
+                            <ModalFooter>
+                                <ModalButton
+                                    text="Logout"
+                                    bordered
+                                    key="button-2"
+                                    onPress={() => {
+                                        RNZaloSDK.logout();
+                                        setState({
+                                            user: {},
+                                            loggedIn: false,
+                                            oauth_code: null,
+                                            loading: false,
+                                        });
+                                    }}
+                                />
+                                <ModalButton key="button-1" bordered text="Cancel" onPress={() => setVisible(false)} />
+                            </ModalFooter>
+                        }
+                    >
+                        <ModalContent style={{ flex: 1 }}>
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Image style={{ width: 100, height: 100 }} source={{ uri: user.picture.data.url }} />
+                                <View style={{ flex: 0.9, flewDirection: 'column' }}>
+                                    <Text>{user.name}</Text>
+                                    <Text>{user.id}</Text>
+                                </View>
+                            </View>
+                        </ModalContent>
+                    </Modal>
+                </TouchableOpacity>
+            )}
+        </LoginContext.Consumer>
+    );
+};
 
-    onError = err => {
+const MainScreen = props => {
+    const [state, setState] = useContext(LoginContext);
+    const onError = err => {
         if (err === 'Not authentication') {
             Alert.alert('Ngưởi dùng chưa login.\nHãy vào Oauth > Login Login Zalo');
         }
-        this.setState({ err });
+        setState(old_state => ({ ...old_state, err, loading: false }));
     };
 
-    componentDidMount() {
+    useEffect(() => {
+        if (false && state.oauth_code == null) {
+            RNZaloSDK.login(0)
+                .then(login_data => {
+                    RNZaloSDK.getProfile()
+                        .then(data => {
+                            console.log('load data', data);
+                            setState(old_state => ({ ...old_state, ...login_data, ...data, loading: false }));
+                        })
+                        .catch(err => {
+                            onError(err);
+                        });
+                })
+                .catch(err => {
+                    onError(err);
+                });
+        }
         RNZaloSDK.getSettings()
             .then(data => {
-                this.setState({ ...data });
+                console.log('load data', data);
+                setState(old_state => ({ ...old_state, ...data, loading: false }));
             })
-            .then(err => {
-                this.onError(err);
+            .catch(err => {
+                onError(err);
             });
-    }
+    }, []);
 
-    render() {
-        const { buttonStyle, textStyle } = styles;
-        const { is_show_top_bar, label, primary } = this.props;
-        const newButtonStyle = primary
-            ? buttonStyle
-            : [buttonStyle, { backgroundColor: '#f34541', borderBottomColor: '#a43532' }];
+    const { buttonStyle, textStyle } = styles;
+    const { is_show_top_bar, label, primary } = props;
+    const newButtonStyle = primary
+        ? buttonStyle
+        : [buttonStyle, { backgroundColor: '#f34541', borderBottomColor: '#a43532' }];
+    if (state.loading) {
         return (
-            <View style={styles.container}>
-                {is_show_top_bar ? (
-                    <View style={styles.topBar}>
-                        <Text style={styles.topBarTextStyle} testID="txt_top_bar">
-                            ZaloSDK Demo
-                        </Text>
-                    </View>
-                ) : null}
-                <View style={styles.bodyUI}>
-                    <TouchableOpacity
-                        key="oauth"
-                        style={buttonStyle}
-                        testID="btn_oauth"
-                        accessibilityLabel="btn_oauth"
-                        onPress={() => {
-                            Actions.oauth();
-                        }}
-                    >
-                        <Text style={textStyle}>Oauth</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        key="profile"
-                        style={buttonStyle}
-                        testID="btn_profile"
-                        accessibilityLabel="btn_profile"
-                        onPress={() => {
-                            Actions.profile();
-                        }}
-                    >
-                        <Text style={textStyle}>Profile - Friend</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        key="plugins"
-                        style={buttonStyle}
-                        testID="btn_plugins"
-                        accessibilityLabel="btn_plugins"
-                        onPress={() => {
-                            Actions.plugins();
-                        }}
-                    >
-                        <Text style={textStyle}>Plugins</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        key="tracking"
-                        style={buttonStyle}
-                        testID="btn_tracking"
-                        accessibilityLabel="btn_tracking"
-                        onPress={() => {
-                            Actions.tracking();
-                        }}
-                    >
-                        <Text style={textStyle}>Tracking</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={buttonStyle}
-                        testID="btn_settings"
-                        accessibilityLabel="btn_settings"
-                        onPress={() => {
-                            Actions.settings();
-                        }}
-                    >
-                        <Text style={textStyle}>Settings</Text>
-                    </TouchableOpacity>
-                    {false && (
-                        <TouchableOpacity style={buttonStyle}>
-                            <Text style={textStyle}>Wakeup</Text>
-                        </TouchableOpacity>
-                    )}
-                    <View style={{ ...styles.bodyUIFoot, marginBottom: 100 }}>
-                        <Text>State: </Text>
-                        {Array.from(Object.entries(this.state)).map(data => (
-                            <View
-                                key={data[0]}
-                                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
-                            >
-                                <Text>{'' + data[0]}</Text>
-                                <Text>{JSON.stringify(data[1], null, 2)}</Text>
-                            </View>
-                        ))}
-                    </View>
-                </View>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text
+                    style={{
+                        fontSize: 30,
+                    }}
+                >
+                    Loading ...
+                </Text>
             </View>
         );
     }
-}
+    return (
+        <View style={styles.container}>
+            {is_show_top_bar ? (
+                <View style={styles.topBar}>
+                    <Text style={styles.topBarTextStyle} testID="txt_top_bar">
+                        ZaloSDK Demo
+                    </Text>
+                </View>
+            ) : null}
+            <View style={styles.bodyUI}>
+                {state['oauth_code'] && state.oauth_code != null ? (
+                    <ButtonLogged style={buttonStyle} key="btn_loggedin" />
+                ) : null}
+                <TouchableOpacity
+                    key="oauth"
+                    style={buttonStyle}
+                    testID="btn_oauth"
+                    accessibilityLabel="btn_oauth"
+                    onPress={() => {
+                        Actions.oauth();
+                    }}
+                >
+                    <Text style={textStyle}>Oauth</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    key="profile"
+                    style={buttonStyle}
+                    testID="btn_profile"
+                    accessibilityLabel="btn_profile"
+                    onPress={() => {
+                        Actions.profile();
+                    }}
+                >
+                    <Text style={textStyle}>Profile - Friend</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    key="plugins"
+                    style={buttonStyle}
+                    testID="btn_plugins"
+                    accessibilityLabel="btn_plugins"
+                    onPress={() => {
+                        Actions.plugins();
+                    }}
+                >
+                    <Text style={textStyle}>Plugins</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    key="tracking"
+                    style={buttonStyle}
+                    testID="btn_tracking"
+                    accessibilityLabel="btn_tracking"
+                    onPress={() => {
+                        Actions.tracking();
+                    }}
+                >
+                    <Text style={textStyle}>Tracking</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={buttonStyle}
+                    testID="btn_settings"
+                    accessibilityLabel="btn_settings"
+                    onPress={() => {
+                        Actions.settings();
+                    }}
+                >
+                    <Text style={textStyle}>Settings</Text>
+                </TouchableOpacity>
+                {false && (
+                    <TouchableOpacity style={buttonStyle}>
+                        <Text style={textStyle}>Wakeup</Text>
+                    </TouchableOpacity>
+                )}
+                <LogStateView state={state} />
+            </View>
+        </View>
+    );
+};
 
 MainScreen.defaultProps = {
     primary: true,

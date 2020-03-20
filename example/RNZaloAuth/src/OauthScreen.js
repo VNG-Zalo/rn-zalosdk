@@ -1,22 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import { ScrollView, Text, TouchableOpacity, Linking, View } from 'react-native';
 import RNZaloSDK from 'rn-zalo';
+import { LoginProvider, LoginContext } from './Context/Login';
+import LogStateView from './components/LogStateView';
 
-export default class OauthScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            oauth_code: null,
-        };
-    }
-
-    render() {
-        const { buttonStyle, textStyle } = styles;
-        const { is_show_top_bar, label, primary } = this.props;
-        const newButtonStyle = primary
-            ? buttonStyle
-            : [buttonStyle, { backgroundColor: '#f34541', borderBottomColor: '#a43532' }];
-        return (
+const OauthScreen = props => {
+    const [state, setState] = useContext(LoginContext);
+    const { buttonStyle, textStyle } = styles;
+    const { is_show_top_bar, label, primary } = props;
+    const newButtonStyle = primary
+        ? buttonStyle
+        : [buttonStyle, { backgroundColor: '#f34541', borderBottomColor: '#a43532' }];
+    return (
+        <LoginProvider>
             <View style={styles.container}>
                 {is_show_top_bar ? (
                     <View style={styles.topBar}>
@@ -28,16 +24,16 @@ export default class OauthScreen extends Component {
                 <ScrollView style={styles.bodyUI}>
                     <TouchableOpacity
                         style={buttonStyle}
+                        key="btn_oauth_by_app"
                         testID="btn_oauth_by_app"
                         accessibilityLabel="btn_oauth_by_app"
                         onPress={() => {
                             RNZaloSDK.login(1)
                                 .then(data => {
-                                    this.setState({ ...data, err: null });
+                                    setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    console.log(err);
-                                    this.setState({ err });
+                                    setState(old_state => ({ ...old_state, err }));
                                 });
                         }}
                     >
@@ -45,16 +41,16 @@ export default class OauthScreen extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}
+                        key="btn_oauth_by_web"
                         testID="btn_oauth_by_web"
                         accessibilityLabel="btn_oauth_by_web"
                         onPress={() => {
                             RNZaloSDK.login(2)
                                 .then(data => {
-                                    this.setState({ ...data, err: null });
+                                    setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    console.log(err);
-                                    this.setState({ err });
+                                    setState(old_state => ({ ...old_state, err }));
                                 });
                         }}
                     >
@@ -62,71 +58,73 @@ export default class OauthScreen extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}
+                        key="btn_oauth_by_web_or_app"
                         testID="btn_oauth_by_web_or_app"
                         accessibilityLabel="btn_oauth_by_web_or_app"
                         onPress={() => {
                             RNZaloSDK.login()
                                 .then(data => {
-                                    this.setState({ ...data, err: null });
+                                    setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    console.log(err);
-                                    this.setState({ err });
+                                    setState(old_state => ({ ...old_state, err }));
                                 });
                         }}
                     >
                         <Text style={textStyle}>Login Zalo Via App or Web</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={buttonStyle} testID="btn_register_zalo">
+                    <TouchableOpacity
+                        style={buttonStyle}
+                        key="btn_register_zalo"
+                        testID="btn_register_zalo"
+                        accessibilityLabel="btn_register_zalo"
+                    >
                         <Text style={textStyle}>Rgister Zalo</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}
+                        key="btn_validate_oauth_code"
                         testID="btn_validate_oauth_code"
                         accessibilityLabel="btn_validate_oauth_code"
                         onPress={() => {
                             RNZaloSDK.isAuthenticate()
                                 .then(data => {
-                                    this.setState({ ...data, err: null });
+                                    setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    this.setState({ err });
+                                    setState({ ...state, err });
                                 });
                         }}
                     >
                         <Text style={textStyle}>Validate Oauth Code</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={buttonStyle} testID="btn_check_app_zalo_login" onPress={() => {}}>
+                    <TouchableOpacity
+                        style={buttonStyle}
+                        key="btn_check_app_zalo_login"
+                        testID="btn_check_app_zalo_login"
+                        accessibilityLabel="btn_check_app_zalo_login"
+                        onPress={() => {}}
+                    >
                         <Text style={textStyle}>Check App Zalo login</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}
+                        key="btn_oauth_logout"
                         testID="btn_oauth_logout"
                         accessibilityLabel="btn_oauth_logout"
                         onPress={() => {
                             RNZaloSDK.logout();
-                            this.setState({ oauth_code: null });
+                            setState(old_state => ({ ...old_state, oauth_code: null }));
                         }}
                     >
                         <Text style={textStyle}>Logout Zalo App</Text>
                     </TouchableOpacity>
-                    <View style={styles.bodyUIFoot}>
-                        <Text> Status: </Text>
-                        {this.state.oauth_code === null || <Text testID="txt_status_login">Login</Text>}
-                        <Text>Output: </Text>
-                        {Array.from(Object.entries(this.state)).map(data => {
-                            if (data[0] === 'oauth_code') {
-                                return null;
-                            } else {
-                                return <Text> {'' + data[0] + ':' + JSON.stringify(data[1])} </Text>;
-                            }
-                        })}
-                    </View>
+                    <LogStateView state={state} />
                 </ScrollView>
             </View>
-        );
-    }
-}
+        </LoginProvider>
+    );
+};
 
 OauthScreen.defaultProps = {
     primary: true,
@@ -176,3 +174,5 @@ const styles = {
         margin: 8,
     },
 };
+
+export default OauthScreen;

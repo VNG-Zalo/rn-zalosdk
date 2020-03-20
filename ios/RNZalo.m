@@ -89,28 +89,30 @@ RCT_EXPORT_METHOD(getProfile: (RCTResponseSenderBlock)successCallback
         }
     }];
     
+    
 }
 
 RCT_EXPORT_METHOD(isAuthenticate: (RCTResponseSenderBlock) successCallback
                   failureCallback:(RCTResponseErrorBlock) failureCallback) {
-    [[ZaloSDK sharedInstance] isAuthenticatedZaloWithCompletionHandler:^(ZOOauthResponseObject *response) {
-        if ([response isSucess]){
-            successCallback(@[@{
-                                  @"oauthCode": response.oauthCode,
-                                  @"displayName":response.displayName,
-                                  @"phoneNumber":response.phoneNumber,
-                                  @"isRegister":@(response.isRegister),
-                                  @"gender":response.gender
-            }]);
-        } else if (response.errorCode != kZaloSDKErrorCodeUserCancel) {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
-            
-        }
-    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[ZaloSDK sharedInstance] isAuthenticatedZaloWithCompletionHandler:^(ZOOauthCheckingResponseObject *response) {
+            if (response.errorCode == kZaloSDKErrorCodeNoneError ){
+                successCallback(@[@{
+                                      @"displayName":response.displayName,
+                                      @"phoneNumber":response.phoneNumber,
+                                      @"isRegister":@(response.isRegister),
+                                      @"gender":response.gender
+                }]);
+            } else if (response.errorCode != kZaloSDKErrorCodeUserCancel) {
+                failureCallback(
+                                [[NSError alloc] initWithDomain:@"Zalo Oauth"
+                                                           code:response.errorCode
+                                                       userInfo:@{@"message": response.errorMessage}]
+                                );
+                
+            }
+        }];
+    });
 }
 
 RCT_EXPORT_METHOD(sendOfficalAccountMessageWith: (NSString*) template_id
@@ -273,11 +275,12 @@ RCT_EXPORT_METHOD(getSettings:(NSDictionary*) args
                   successCallback: (RCTResponseSenderBlock) successCallback
                   failureCallback: (RCTResponseErrorBlock) failureCallback ){
     //    successCallback(@[response]);
+    NSString* errMsg = @"Method not implement";
     failureCallback(
-                    [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                               code: -1
-                                           userInfo:@{@"message": @"Method not emplements"}]
-                    );
+                    [[NSError alloc]
+                     initWithDomain:@"Zalo Oauth"
+                     code: -1
+                     userInfo:@{@"message": errMsg }]);
 }
 
 RCT_EXPORT_METHOD(getDeviceID:(NSDictionary*) args
@@ -287,7 +290,7 @@ RCT_EXPORT_METHOD(getDeviceID:(NSDictionary*) args
     failureCallback(
                     [[NSError alloc] initWithDomain:@"Zalo Oauth"
                                                code:-1
-                                           userInfo:@{@"message": @"Method not emplements"}]
+                                           userInfo:@{@"message": @"Method not implement"}]
                     );
 }
 

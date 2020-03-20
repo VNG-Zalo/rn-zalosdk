@@ -22,6 +22,7 @@
         "react": "16.9.0",
         "react-native": "0.61.0",
         "react-native-button": "^2.4.0",
+        "react-native-modals": "^",
         "react-native-gesture-handler": "^1.6.0",
         "react-native-message-bar": "^2.0.10",
         "react-native-reanimated": "^1.7.0",

@@ -1,7 +1,7 @@
 import React, { Component, useState, createContext } from 'react';
 import { Text, Alert, TouchableOpacity, Linking, View, ScrollView } from 'react-native';
 import RNZaloSDK from 'rn-zalo';
-import { TextInput } from 'react-native-gesture-handler';
+import LogStateView from './components/LogStateView';
 
 const SettingList = props => <View style={styles.settingList}>{props.children}</View>;
 const SettingContainer = props => <View style={styles.settingContainer}>{props.children}</View>;
@@ -30,7 +30,7 @@ export default class SettingsScreen extends Component {
             .then(data => {
                 this.setState({ ...data });
             })
-            .then(err => {
+            .catch(err => {
                 this.onError(err);
             });
     }
@@ -70,15 +70,7 @@ export default class SettingsScreen extends Component {
                         </Text>
                     </SettingListItem>
                 </SettingList>
-                <View style={{ ...styles.bodyUIFoot, flex: 1, marginBottom: 100 }}>
-                    <Text>State: </Text>
-                    {Array.from(Object.entries(this.state)).map(data => (
-                        <View key={data[0]} style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{'' + data[0]}</Text>
-                            <Text>{JSON.stringify(data[1], null, 2)}</Text>
-                        </View>
-                    ))}
-                </View>
+                <LogStateView state={this.state} />
             </View>
         );
     }

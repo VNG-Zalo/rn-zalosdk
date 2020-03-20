@@ -1,96 +1,83 @@
-import React, { Component, useState, createContext } from 'react';
+import React, { Component, useState, createContext, useContext, useEffect } from 'react';
 import { Text, Alert, TouchableOpacity, Linking, View, ScrollView } from 'react-native';
 import RNZaloSDK from 'rn-zalo';
 import { TextInput } from 'react-native-gesture-handler';
+import { LoginContext } from './Context/Login';
+import LogStateView from './components/LogStateView';
 
-export default class ProfileScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+const TrackingScreen = props => {
+    const [state, setState] = useContext(LoginContext);
+    // ;const [state, setState] = useState({});
 
-    onError = e => {
-        if (e === 'Not authentication') {
+    const onError = err => {
+        if (err === 'Not authentication') {
             Alert.alert('Ngưởi dùng chưa login.\nHãy vào Oauth > Login Login Zalo');
         }
+        setState({ ...state, err });
     };
 
-    componentDidMount() {
+    useEffect(() => {
         RNZaloSDK.getDeviceID()
             .then(d => {
-                this.setState({ ...d, err: null });
+                setState({ ...state, ...d, err: null });
             })
             .catch(err => {
-                this.setState({ err });
-                this.onError(err);
+                onError(err);
             });
-    }
+    }, []);
 
-    render() {
-        const { buttonStyle, textStyle } = styles;
-        return (
-            <View style={styles.container}>
-                <ScrollView
-                    automaticallyAdjustContentInsets={false}
-                    style={styles.bodyUI}
-                    contentContainerStyle={{ flexShrink: 1, justifyContent: 'space-between' }}
+    const { buttonStyle, textStyle } = styles;
+    return (
+        <View style={styles.container}>
+            <ScrollView
+                automaticallyAdjustContentInsets={false}
+                style={styles.bodyUI}
+                contentContainerStyle={{ flexShrink: 1, justifyContent: 'space-between' }}
+            >
+                <TouchableOpacity
+                    style={buttonStyle}
+                    testID="btn_get_deviceid"
+                    accessibilityLabel="btn_get_deviceid"
+                    onPress={() => {
+                        const { device_id } = state;
+                        Alert.alert('Device id: \n' + device_id);
+                    }}
                 >
-                    <TouchableOpacity
-                        style={buttonStyle}
-                        testID="btn_get_deviceid"
-                        accessibilityLabel="btn_get_deviceid"
-                        onPress={() => {
-                            const { device_id } = this.state;
-                            Alert.alert('Device id: \n' + device_id);
+                    <Text
+                        style={{
+                            ...textStyle,
+                            height: '100%',
+                            alignContent: 'stretch',
+                            alignSelf: 'stretch',
+                            fontSize: 20,
                         }}
                     >
-                        <Text
-                            style={{
-                                ...textStyle,
-                                height: '100%',
-                                alignContent: 'stretch',
-                                alignSelf: 'stretch',
-                                fontSize: 20,
-                            }}
-                        >
-                            Get Device ID
-                        </Text>
-                    </TouchableOpacity>
-                    <View style={{ ...styles.bodyUIFoot, marginBottom: 100 }}>
-                        <Text style={textStyle}> Info: </Text>
-                        {this.state['device_id'] === null || (
-                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Text>{'Device id:'}</Text>
-                                <Text testID="txt_status_device_id" accessibilityLabel="txt_status_device_id">
-                                    {String(this.state.device_id).substr(0, 20)}
-                                </Text>
-                            </View>
-                        )}
-                        <Text style={textStyle}>Events: </Text>
-                        {this.state['events'] &&
-                            Array.from(Object.entries(this.state['events'])).map(data => {
-                                return (
-                                    <Text key={data[0]}>{'' + data[0] + ':' + JSON.stringify(data[1], null, 2)}</Text>
-                                );
-                            })}
-                        <Text style={textStyle}>State: </Text>
-                        {Array.from(Object.entries(this.state)).map(data => (
-                            <View
-                                key={data[0]}
-                                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
-                            >
-                                <Text>{'' + data[0]}</Text>
-                                <Text style={{ width: '60%' }}>{JSON.stringify(data[1], null, 2)}</Text>
-                            </View>
-                        ))}
-                    </View>
-                </ScrollView>
-            </View>
-        );
-    }
-}
+                        Get Device ID
+                    </Text>
+                </TouchableOpacity>
+                <View style={{ ...styles.bodyUIFoot, marginBottom: 100 }}>
+                    <Text style={textStyle}> Info: </Text>
+                    {state['device_id'] === null || (
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text>{'Device id:'}</Text>
+                            <Text testID="txt_status_device_id" accessibilityLabel="txt_status_device_id">
+                                {String(state.device_id).substr(0, 20)}
+                            </Text>
+                        </View>
+                    )}
+                    <Text style={textStyle}>Events: </Text>
+                    {state['events'] &&
+                        Array.from(Object.entries(state['events'])).map(data => {
+                            return <Text key={data[0]}>{'' + data[0] + ':' + JSON.stringify(data[1], null, 2)}</Text>;
+                        })}
+                    <LogStateView state={state} />
+                </View>
+            </ScrollView>
+        </View>
+    );
+};
 
-ProfileScreen.defaultProps = {
+TrackingScreen.defaultProps = {
     primary: true,
     is_show_top_bar: false,
 };
@@ -154,3 +141,5 @@ const styles = {
         padding: 5,
     },
 };
+
+export default TrackingScreen;
