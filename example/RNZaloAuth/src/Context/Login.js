@@ -1,4 +1,4 @@
-// import { createStore } from 'redux';
+//rimport { createStore } from 'redux';
 import React, { createContext, useState } from 'react';
 
 const defaultState = {};
@@ -18,7 +18,6 @@ const LoginContext = createContext([{}, () => {}]);
 
 const LoginProvider = props => {
     const [state, setState] = useState({
-        loggedIn: false,
         user: {},
         oauth_code: null,
         loading: true,

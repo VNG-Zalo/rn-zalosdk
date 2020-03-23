@@ -3,7 +3,7 @@
 // enableScreens();
 import React, { Component, useReducer, useState, useContext, useEffect } from 'react';
 import { Router, Scene, Actions } from 'react-native-router-flux';
-import { Image, Text, TouchableOpacity, Linking, View, Alert } from 'react-native';
+import { ScrollView, Image, Text, TouchableOpacity, Linking, View, Alert } from 'react-native';
 import OauthScreen from './OauthScreen';
 import ProfileScreen from './ProfileScreen';
 import PluginsScreen from './PluginsScreen';
@@ -34,85 +34,98 @@ const AppScreen = props => {
 
 const ButtonLogged = props => {
     const [visible, setVisible] = useState(false);
+    const [state, setState] = useContext(LoginContext);
+    useEffect(() => {
+        if (state['user'] === null || Object.keys(state.user).length === 0) {
+            RNZaloSDK.getProfile()
+                .then(data => {
+                    console.log('getprofile data', data);
+                    setState({ ...state, ...data, loading: false });
+                })
+                .catch(err => {
+                    props.onError(err);
+                });
+        }
+    }, [state.oauth_code]);
+    if (state['user'] === null || Object.keys(state.user).length === 0) {
+        return null;
+    }
+    const { user } = state;
     return (
-        <LoginContext.Consumer>
-            {([{ user }, setState]) => (
-                <TouchableOpacity
-                    key="oauth"
-                    style={props.style}
-                    testID="btn_oauth"
-                    accessibilityLabel="btn_oauth"
-                    onPress={() => {
-                        setVisible(true);
+        <TouchableOpacity
+            key="oauth"
+            style={props.style}
+            testID="btn_oauth"
+            accessibilityLabel="btn_oauth"
+            onPress={() => {
+                setVisible(true);
+            }}
+        >
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignContext: 'center',
+                }}
+            >
+                <Text
+                    style={{
+                        ...styles.textStyle,
+                        textAlign: 'center',
+                        alignSelf: 'center',
+                        flex: 1,
                     }}
                 >
-                    <View
-                        style={{
-                            flex: 1,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignContext: 'center',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                ...styles.textStyle,
-                                textAlign: 'center',
-                                alignSelf: 'center',
-                                flex: 1,
+                    Profile Info
+                </Text>
+                {user['picture'] && user.picture['data'] ? (
+                    <Image style={{ flex: 0.2 }} source={{ uri: user.picture.data.url }} />
+                ) : (
+                    <Text>No picture</Text>
+                )}
+            </View>
+            <Modal
+                height={0.3}
+                width={0.9}
+                rounded
+                actionsBordered
+                onTouchOutside={() => {
+                    setVisible(false);
+                }}
+                modalTitle={<ModalTitle title="User profile" align="left" style={{ backgroundColor: 'white' }} />}
+                visible={visible}
+                footer={
+                    <ModalFooter style={{ backgroundColor: 'white' }}>
+                        <ModalButton
+                            text="Logout"
+                            bordered
+                            key="button-2"
+                            onPress={() => {
+                                RNZaloSDK.logout();
+                                setState({
+                                    user: {},
+                                    loggedIn: false,
+                                    oauth_code: null,
+                                    loading: false,
+                                });
                             }}
-                        >
-                            Profile Info
-                        </Text>
-                        {user['picture'] ? (
-                            <Image style={{ flex: 0.2 }} source={{ uri: user.picture.data.url }} />
-                        ) : (
-                            <Text>No picture</Text>
-                        )}
+                        />
+                        <ModalButton key="button-1" bordered text="Cancel" onPress={() => setVisible(false)} />
+                    </ModalFooter>
+                }
+            >
+                <ModalContent style={{ flex: 1, backgroundColor: 'white' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Image style={{ width: 100, height: 100 }} source={{ uri: user.picture.data.url }} />
+                        <View style={{ flex: 0.9, flewDirection: 'column' }}>
+                            <Text>{user.name}</Text>
+                            <Text>{user.id}</Text>
+                        </View>
                     </View>
-                    <Modal
-                        height={0.3}
-                        width={0.9}
-                        rounded
-                        actionsBordered
-                        onTouchOutside={() => {
-                            setVisible(false);
-                        }}
-                        modalTitle={<ModalTitle title="User profile" align="left" />}
-                        visible={visible}
-                        footer={
-                            <ModalFooter>
-                                <ModalButton
-                                    text="Logout"
-                                    bordered
-                                    key="button-2"
-                                    onPress={() => {
-                                        RNZaloSDK.logout();
-                                        setState({
-                                            user: {},
-                                            loggedIn: false,
-                                            oauth_code: null,
-                                            loading: false,
-                                        });
-                                    }}
-                                />
-                                <ModalButton key="button-1" bordered text="Cancel" onPress={() => setVisible(false)} />
-                            </ModalFooter>
-                        }
-                    >
-                        <ModalContent style={{ flex: 1 }}>
-                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Image style={{ width: 100, height: 100 }} source={{ uri: user.picture.data.url }} />
-                                <View style={{ flex: 0.9, flewDirection: 'column' }}>
-                                    <Text>{user.name}</Text>
-                                    <Text>{user.id}</Text>
-                                </View>
-                            </View>
-                        </ModalContent>
-                    </Modal>
-                </TouchableOpacity>
-            )}
-        </LoginContext.Consumer>
+                </ModalContent>
+            </Modal>
+        </TouchableOpacity>
     );
 };
 
@@ -126,7 +139,7 @@ const MainScreen = props => {
     };
 
     useEffect(() => {
-        if (false && state.oauth_code == null) {
+        if (false && state.oauth_code === null) {
             RNZaloSDK.login(0)
                 .then(login_data => {
                     RNZaloSDK.getProfile()
@@ -144,8 +157,8 @@ const MainScreen = props => {
         }
         RNZaloSDK.getSettings()
             .then(data => {
-                console.log('load data', data);
-                setState(old_state => ({ ...old_state, ...data, loading: false }));
+                console.log('getSettings data', data);
+                setState({ ...state, ...data, loading: false });
             })
             .catch(err => {
                 onError(err);
@@ -171,7 +184,7 @@ const MainScreen = props => {
         );
     }
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             {is_show_top_bar ? (
                 <View style={styles.topBar}>
                     <Text style={styles.topBarTextStyle} testID="txt_top_bar">
@@ -180,7 +193,7 @@ const MainScreen = props => {
                 </View>
             ) : null}
             <View style={styles.bodyUI}>
-                {state['oauth_code'] && state.oauth_code != null ? (
+                {state['oauth_code'] && state.oauth_code !== null ? (
                     <ButtonLogged style={buttonStyle} key="btn_loggedin" />
                 ) : null}
                 <TouchableOpacity
@@ -244,7 +257,7 @@ const MainScreen = props => {
                 )}
                 <LogStateView state={state} />
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
