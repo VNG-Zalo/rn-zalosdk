@@ -1,5 +1,5 @@
 import React, { Component, useContext } from 'react';
-import { ScrollView, Text, TouchableOpacity, Linking, View } from 'react-native';
+import { Alert, ScrollView, Text, TouchableOpacity, Linking, View } from 'react-native';
 import RNZaloSDK from 'rn-zalo';
 import { LoginProvider, LoginContext } from './Context/Login';
 import LogStateView from './components/LogStateView';
@@ -11,6 +11,13 @@ const OauthScreen = props => {
     const newButtonStyle = primary
         ? buttonStyle
         : [buttonStyle, { backgroundColor: '#f34541', borderBottomColor: '#a43532' }];
+
+    const onError = err => {
+        if (err.error_code === -1024) {
+            Alert.alert('Để dùng tính năng này cần phải install app Zalo ');
+        }
+        setState({ ...state, err });
+    };
     return (
         <LoginProvider>
             <View style={styles.container}>
@@ -33,7 +40,7 @@ const OauthScreen = props => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    setState(old_state => ({ ...old_state, err }));
+                                    onError(err);
                                 });
                         }}
                     >
@@ -50,7 +57,7 @@ const OauthScreen = props => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    setState(old_state => ({ ...old_state, err }));
+                                    onError(err);
                                 });
                         }}
                     >
@@ -67,7 +74,7 @@ const OauthScreen = props => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    setState(old_state => ({ ...old_state, err }));
+                                    onError(err);
                                 });
                         }}
                     >
@@ -79,7 +86,7 @@ const OauthScreen = props => {
                         testID="btn_register_zalo"
                         accessibilityLabel="btn_register_zalo"
                     >
-                        <Text style={textStyle}>Rgister Zalo</Text>
+                        <Text style={textStyle}>Register Zalo</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}
@@ -92,7 +99,7 @@ const OauthScreen = props => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
                                 })
                                 .catch(err => {
-                                    setState({ ...state, err });
+                                    onError(err);
                                 });
                         }}
                     >
@@ -106,18 +113,6 @@ const OauthScreen = props => {
                         onPress={() => {}}
                     >
                         <Text style={textStyle}>Check App Zalo login</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={buttonStyle}
-                        key="btn_oauth_logout"
-                        testID="btn_oauth_logout"
-                        accessibilityLabel="btn_oauth_logout"
-                        onPress={() => {
-                            RNZaloSDK.logout();
-                            setState(old_state => ({ ...old_state, oauth_code: null }));
-                        }}
-                    >
-                        <Text style={textStyle}>Logout Zalo App</Text>
                     </TouchableOpacity>
                     <LogStateView state={state} />
                 </ScrollView>

@@ -21,6 +21,7 @@ const LoginProvider = props => {
         user: {},
         oauth_code: null,
         loading: true,
+        data: [],
     });
     return <LoginContext.Provider value={[state, setState]}>{props.children}</LoginContext.Provider>;
 };

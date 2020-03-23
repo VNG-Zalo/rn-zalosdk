@@ -7,7 +7,7 @@ import { LoginContext } from './Context/Login';
 const ProfileScreen = props => {
     const [state, setState] = useContext(LoginContext);
     const onError = err => {
-        if (err === 'Not authentication') {
+        if (err.error_message === 'Not authentication') {
             Alert.alert('Ngưởi dùng chưa login.\nHãy vào Oauth > Login Login Zalo');
         }
         setState(old_state => ({ ...old_state, err }));
@@ -51,7 +51,7 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.getUserFriendListAtOffset(0, 999)
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, data, err: null }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -65,12 +65,12 @@ const ProfileScreen = props => {
                     style={buttonStyle}
                     testID="btn_send_message_to_friend"
                     onPress={() => {
-                        if (this.state['data'] === undefined || this.state.data.length === 0) {
+                        if (state['data'] === null || state.data.length === 0) {
                             Alert.alert('Xin hãy nhấn button "Lấy danh sách friend đã sử dụng ứng dụng "');
                             return;
                         }
                         RNZaloSDK.sendMessageTo(
-                            this.state.data[0].id,
+                            state.data.data[0].id,
                             'Hello, use this app with me !!',
                             'https://developers.zalo.me/',
                         )
@@ -91,10 +91,10 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.getUserInvitableFriendListAtOffset(0, 20)
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, data, err: null }));
                             })
                             .catch(err => {
-                                this.onError(err);
+                                onError(err);
                             });
                     }}
                 >
@@ -105,13 +105,13 @@ const ProfileScreen = props => {
                     style={buttonStyle}
                     testID="btn_invite_friend_use_app"
                     onPress={() => {
-                        if (this.state['data'] === undefined || this.state.data.length === 0) {
+                        if (state['data'] === null || state.data.length === 0) {
                             Alert.alert('Xin hãy nhấn button "Lấy danh sách friend có thể mời"');
                             return;
                         }
-                        RNZaloSDK.sendAppRequestTo(this.state.data[0].id, 'Hello, use this app with me !!')
+                        RNZaloSDK.sendAppRequestTo(state.data.data[0].id, 'Hello, use this app with me !!')
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, invite_friend_used_app: data, err: null }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -125,13 +125,13 @@ const ProfileScreen = props => {
                     style={buttonStyle}
                     testID="btn_send_message_all_user_linked_OA"
                     onPress={() => {
-                        if (this.state['data'] === undefined || this.state.data.length === 0) {
+                        if (state['data'] === null || state.data.length === 0) {
                             Alert.alert('Xin hãy nhấn button "Lấy danh sách friend đã sử dụng ứng dụng "');
                             return;
                         }
-                        RNZaloSDK.sendOfficalAccountMessageWith(this.state.data[0].id, {})
+                        RNZaloSDK.sendOfficalAccountMessageWith(state.data[0].id, {})
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, send_msg_oa: data, err: null }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -147,7 +147,7 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.postFeedWithMessage('Post from react native sdk', 'https://developers.zalo.me')
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, post_to_wall: data, err: null }));
                             })
                             .catch(err => {
                                 onError(err);

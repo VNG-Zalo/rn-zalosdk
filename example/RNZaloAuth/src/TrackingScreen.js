@@ -10,7 +10,7 @@ const TrackingScreen = props => {
     // ;const [state, setState] = useState({});
 
     const onError = err => {
-        if (err === 'Not authentication') {
+        if (err.error_message === 'Not authentication') {
             Alert.alert('Ngưởi dùng chưa login.\nHãy vào Oauth > Login Login Zalo');
         }
         setState({ ...state, err });
@@ -28,52 +28,50 @@ const TrackingScreen = props => {
 
     const { buttonStyle, textStyle } = styles;
     return (
-        <View style={styles.container}>
-            <ScrollView
-                automaticallyAdjustContentInsets={false}
-                style={styles.bodyUI}
-                contentContainerStyle={{ flexShrink: 1, justifyContent: 'space-between' }}
+        <ScrollView
+            automaticallyAdjustContentInsets={false}
+            style={styles.bodyUI}
+            contentContainerStyle={{ flexShrink: 1, justifyContent: 'space-between' }}
+        >
+            <TouchableOpacity
+                style={buttonStyle}
+                testID="btn_get_deviceid"
+                accessibilityLabel="btn_get_deviceid"
+                onPress={() => {
+                    const { device_id } = state;
+                    Alert.alert('Device id: \n' + device_id);
+                }}
             >
-                <TouchableOpacity
-                    style={buttonStyle}
-                    testID="btn_get_deviceid"
-                    accessibilityLabel="btn_get_deviceid"
-                    onPress={() => {
-                        const { device_id } = state;
-                        Alert.alert('Device id: \n' + device_id);
+                <Text
+                    style={{
+                        ...textStyle,
+                        height: '100%',
+                        alignContent: 'stretch',
+                        alignSelf: 'stretch',
+                        fontSize: 20,
                     }}
                 >
-                    <Text
-                        style={{
-                            ...textStyle,
-                            height: '100%',
-                            alignContent: 'stretch',
-                            alignSelf: 'stretch',
-                            fontSize: 20,
-                        }}
-                    >
-                        Get Device ID
-                    </Text>
-                </TouchableOpacity>
-                <View style={{ ...styles.bodyUIFoot, marginBottom: 100 }}>
-                    <Text style={textStyle}> Info: </Text>
-                    {state['device_id'] === null || (
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{'Device id:'}</Text>
-                            <Text testID="txt_status_device_id" accessibilityLabel="txt_status_device_id">
-                                {String(state.device_id).substr(0, 20)}
-                            </Text>
-                        </View>
-                    )}
-                    <Text style={textStyle}>Events: </Text>
-                    {state['events'] &&
-                        Array.from(Object.entries(state['events'])).map(data => {
-                            return <Text key={data[0]}>{'' + data[0] + ':' + JSON.stringify(data[1], null, 2)}</Text>;
-                        })}
-                    <LogStateView state={state} />
-                </View>
-            </ScrollView>
-        </View>
+                    Get Device ID
+                </Text>
+            </TouchableOpacity>
+            <View style={{ ...styles.bodyUIFoot, marginBottom: 100 }}>
+                <Text style={textStyle}> Info: </Text>
+                {state['device_id'] === null || (
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text>{'Device id:'}</Text>
+                        <Text testID="txt_status_device_id" accessibilityLabel="txt_status_device_id">
+                            {String(state.device_id).substr(0, 20)}
+                        </Text>
+                    </View>
+                )}
+                <Text style={textStyle}>Events: </Text>
+                {state['events'] &&
+                    Array.from(Object.entries(state['events'])).map(data => {
+                        return <Text key={data[0]}>{'' + data[0] + ':' + JSON.stringify(data[1], null, 2)}</Text>;
+                    })}
+                <LogStateView state={state} />
+            </View>
+        </ScrollView>
     );
 };
 

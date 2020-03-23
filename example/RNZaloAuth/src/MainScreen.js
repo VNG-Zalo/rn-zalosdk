@@ -46,6 +46,14 @@ const ButtonLogged = props => {
                     props.onError(err);
                 });
         }
+        return () => {
+            setState({
+                data: [],
+                user: {},
+                oauth_code: null,
+                loading: false,
+            });
+        };
     }, [state.oauth_code]);
     if (state['user'] === null || Object.keys(state.user).length === 0) {
         return null;
@@ -86,6 +94,7 @@ const ButtonLogged = props => {
                 )}
             </View>
             <Modal
+                customBackdrop={<View style={{ flex: 1, backdropColor: 'white' }} />}
                 height={0.3}
                 width={0.9}
                 rounded
@@ -93,29 +102,43 @@ const ButtonLogged = props => {
                 onTouchOutside={() => {
                     setVisible(false);
                 }}
-                modalTitle={<ModalTitle title="User profile" align="left" style={{ backgroundColor: 'white' }} />}
                 visible={visible}
+                modalTitle={null}
                 footer={
                     <ModalFooter style={{ backgroundColor: 'white' }}>
                         <ModalButton
                             text="Logout"
                             bordered
                             key="button-2"
-                            onPress={() => {
-                                RNZaloSDK.logout();
-                                setState({
-                                    user: {},
-                                    loggedIn: false,
-                                    oauth_code: null,
-                                    loading: false,
-                                });
+                            onPress={async () => {
+                                setVisible(false);
+                                await RNZaloSDK.logout();
+                                setState({ oauth_code: null });
                             }}
                         />
                         <ModalButton key="button-1" bordered text="Cancel" onPress={() => setVisible(false)} />
                     </ModalFooter>
                 }
             >
-                <ModalContent style={{ flex: 1, backgroundColor: 'white' }}>
+                <ModalContent
+                    style={{
+                        flex: 1,
+                        backgroundColor: 'white',
+                        justifyContent: 'space-between',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 25,
+                            fontWeight: '500',
+                            color: '#000',
+                            textAlign: 'left',
+                            paddingBottom: 10,
+                        }}
+                    >
+                        User profile
+                    </Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Image style={{ width: 100, height: 100 }} source={{ uri: user.picture.data.url }} />
                         <View style={{ flex: 0.9, flewDirection: 'column' }}>
@@ -185,78 +208,69 @@ const MainScreen = props => {
     }
     return (
         <ScrollView style={styles.container}>
-            {is_show_top_bar ? (
-                <View style={styles.topBar}>
-                    <Text style={styles.topBarTextStyle} testID="txt_top_bar">
-                        ZaloSDK Demo
-                    </Text>
-                </View>
+            {state['oauth_code'] && state.oauth_code !== null ? (
+                <ButtonLogged style={buttonStyle} key="btn_loggedin" />
             ) : null}
-            <View style={styles.bodyUI}>
-                {state['oauth_code'] && state.oauth_code !== null ? (
-                    <ButtonLogged style={buttonStyle} key="btn_loggedin" />
-                ) : null}
-                <TouchableOpacity
-                    key="oauth"
-                    style={buttonStyle}
-                    testID="btn_oauth"
-                    accessibilityLabel="btn_oauth"
-                    onPress={() => {
-                        Actions.oauth();
-                    }}
-                >
-                    <Text style={textStyle}>Oauth</Text>
+            <TouchableOpacity
+                key="oauth"
+                style={buttonStyle}
+                testID="btn_oauth"
+                accessibilityLabel="btn_oauth"
+                onPress={() => {
+                    Actions.oauth();
+                }}
+            >
+                <Text style={textStyle}>Oauth</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                key="profile"
+                style={buttonStyle}
+                testID="btn_profile"
+                accessibilityLabel="btn_profile"
+                onPress={() => {
+                    Actions.profile();
+                }}
+            >
+                <Text style={textStyle}>Profile - Friend</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                key="plugins"
+                style={buttonStyle}
+                testID="btn_plugins"
+                accessibilityLabel="btn_plugins"
+                onPress={() => {
+                    Actions.plugins();
+                }}
+            >
+                <Text style={textStyle}>Plugins</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                key="tracking"
+                style={buttonStyle}
+                testID="btn_tracking"
+                accessibilityLabel="btn_tracking"
+                onPress={() => {
+                    Actions.tracking();
+                }}
+            >
+                <Text style={textStyle}>Tracking</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={buttonStyle}
+                testID="btn_settings"
+                accessibilityLabel="btn_settings"
+                onPress={() => {
+                    Actions.settings();
+                }}
+            >
+                <Text style={textStyle}>Settings</Text>
+            </TouchableOpacity>
+            {false && (
+                <TouchableOpacity style={buttonStyle}>
+                    <Text style={textStyle}>Wakeup</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    key="profile"
-                    style={buttonStyle}
-                    testID="btn_profile"
-                    accessibilityLabel="btn_profile"
-                    onPress={() => {
-                        Actions.profile();
-                    }}
-                >
-                    <Text style={textStyle}>Profile - Friend</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    key="plugins"
-                    style={buttonStyle}
-                    testID="btn_plugins"
-                    accessibilityLabel="btn_plugins"
-                    onPress={() => {
-                        Actions.plugins();
-                    }}
-                >
-                    <Text style={textStyle}>Plugins</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    key="tracking"
-                    style={buttonStyle}
-                    testID="btn_tracking"
-                    accessibilityLabel="btn_tracking"
-                    onPress={() => {
-                        Actions.tracking();
-                    }}
-                >
-                    <Text style={textStyle}>Tracking</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={buttonStyle}
-                    testID="btn_settings"
-                    accessibilityLabel="btn_settings"
-                    onPress={() => {
-                        Actions.settings();
-                    }}
-                >
-                    <Text style={textStyle}>Settings</Text>
-                </TouchableOpacity>
-                {false && (
-                    <TouchableOpacity style={buttonStyle}>
-                        <Text style={textStyle}>Wakeup</Text>
-                    </TouchableOpacity>
-                )}
-                <LogStateView state={state} />
-            </View>
+            )}
+            <LogStateView state={state} />
         </ScrollView>
     );
 };
