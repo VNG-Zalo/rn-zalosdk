@@ -56,6 +56,7 @@ const OauthScreen = props => {
                             RNZaloSDK.login(1)
                                 .then(data => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    ShowToast('Login successed');
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -73,6 +74,7 @@ const OauthScreen = props => {
                             RNZaloSDK.login(2)
                                 .then(data => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    ShowToast('Login successed');
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -90,6 +92,7 @@ const OauthScreen = props => {
                             RNZaloSDK.login()
                                 .then(data => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    ShowToast('Login successed');
                                 })
                                 .catch(err => {
                                     onError(err);
