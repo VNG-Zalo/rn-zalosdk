@@ -41,11 +41,7 @@ class RNZaloSDK {
   }
 
   // type: 0 - web or app, 1 - app, 2 - web
-  static login(type = null) {
-    if (type === null) {
-      type = 0;
-    }
-
+  static login(type = LoginType.AppOrWeb) {
     return new Promise((resolve, reject) => {
       console.log("call login with type");
       RNZalo.loginWithType(
@@ -277,6 +273,11 @@ class RNZaloSDK {
 }
 
 export default RNZaloSDK;
+export const LoginType = {
+  AppOrWeb: 0,
+  App: 1,
+  Web: 2
+};
 export const ErrorCode = {
   NoErr: 0,
   UnknownError: -1,
