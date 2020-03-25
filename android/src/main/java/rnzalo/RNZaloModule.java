@@ -111,9 +111,39 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public void logout() {
+    public void logout(Callback successCallback) {
         this.mSDk.unAuthenticate();
         this.mOpenAPI = null;
+
+        WritableMap params = Arguments.createMap();
+        successCallback.invoke(params);
+    }
+
+    @ReactMethod
+    public void RegisterZalo(final Callback successCallback, final  Callback errorCallback) {
+        this.mSDk.registerZalo(this.mReactContext.getCurrentActivity(), new IAuthenticateCompleteListener() {
+            @Override
+            public void onAuthenticateSuccess(long uid, @NotNull String oauth_code, @NotNull Map<String, ?> data) {
+                WritableMap params = Arguments.createMap();
+                params.putString("uId", "" + uid);
+                params.putString("oauth_code", "" + oauth_code);
+                for (Map.Entry<String, ?> entry : data.entrySet()) {
+                    params.putString(entry.getKey(), String.valueOf(entry.getValue()));
+                }
+                mOpenAPI = new ZaloOpenApi(mReactContext, oauth_code);
+                successCallback.invoke(params);
+            }
+
+            @Override
+            public void onAuthenticateError(int i, @NotNull String s) {
+
+                WritableMap params = Arguments.createMap();
+                params.putInt("error_code", i);
+                params.putString("error_message", s);
+                errorCallback.invoke(params);
+            }
+        });
+
     }
 
     @ReactMethod

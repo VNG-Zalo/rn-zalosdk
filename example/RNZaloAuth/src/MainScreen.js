@@ -110,10 +110,24 @@ const ButtonLogged = props => {
                             text="Logout"
                             bordered
                             key="button-2"
-                            onPress={async () => {
+                            onPress={() => {
                                 setVisible(false);
-                                await RNZaloSDK.logout();
-                                setState({ oauth_code: null });
+                                Alert.alert(
+                                    'Xác nhận',
+                                    'Bạn có muốn đăng xuất không?',
+                                    [
+                                        {
+                                            text: 'Có',
+                                            onPress: () => {
+                                                RNZaloSDK.logout().then(() => {
+                                                    setState({ oauth_code: null });
+                                                });
+                                            },
+                                        },
+                                        { text: 'Không', onPress: () => {} },
+                                    ],
+                                    { cancelable: true },
+                                );
                             }}
                         />
                         <ModalButton key="button-1" bordered text="Cancel" onPress={() => setVisible(false)} />

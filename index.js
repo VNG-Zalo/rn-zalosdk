@@ -43,21 +43,47 @@ class RNZaloSDK {
   // type: 0 - web or app, 1 - app, 2 - web
   static login(type = null) {
     if (type === null) {
-      return this.start_login();
-    } else {
-      return new Promise((resolve, reject) => {
-        console.log("call login with type");
-        RNZalo.loginWithType(
-          type,
-          data => {
-            resolve({ ...data });
-          },
-          e => {
-            reject(e);
-          }
-        );
-      });
+      type = 0;
     }
+
+    return new Promise((resolve, reject) => {
+      console.log("call login with type");
+      RNZalo.loginWithType(
+        type,
+        data => {
+          resolve({ ...data });
+        },
+        e => {
+          reject(e);
+        }
+      );
+    });
+  }
+
+  static registerZalo() {
+    return new Promise((resolve, reject) => {
+      RNZalo.RegisterZalo(
+        data => {
+          resolve(data);
+        },
+        err => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  static checkZaloLoginStatus() {
+    return new Promise((resolve, reject) => {
+      RNZalo.CheckZaloLoginStatus(
+        data => {
+          resolve(data);
+        },
+        err => {
+          reject(err);
+        }
+      );
+    });
   }
 
   static getProfile() {
@@ -76,7 +102,11 @@ class RNZaloSDK {
   }
 
   static logout() {
-    RNZalo.logout();
+    return new Promise((resolve, reject) => {
+      RNZalo.logout(data => {
+        resolve(data);
+      });
+    });
   }
 
   static isAuthenticate() {
@@ -247,3 +277,30 @@ class RNZaloSDK {
 }
 
 export default RNZaloSDK;
+export const ErrorCode = {
+  NoErr: 0,
+  UnknownError: -1,
+  PermissionDenied: -201,
+  UserBack: -1111,
+  UserReject: -1114,
+  ZaloUnknownError: -1112,
+  ZaloWebviewLoginNotAllowed: -1118,
+  UnexpectedError: -1000,
+  InvalidAppId: -1001,
+  InvalidParam: -1002,
+  InvalidSecretKey: -1003,
+  InvalidOauthCode: -1004,
+  AcessDenied: -1005,
+  InvalidSession: -1006,
+  CreateOauthFailed: -1007,
+  CreateAccessTokenFailed: -1008,
+  UserConsentFailed: -1009,
+  ApplicationIsNotApproved: -1014,
+  ZaloOauthInvalid: -1019,
+  ZaloWebviewNoNetwork: -1021,
+  ZaloSDKNoInternetAccess: -1022,
+  ZaloApplicationNotInstalled: -1024,
+  ZaloOutOfDate: -1025,
+  CantLoginGoogle: -1205,
+  CantLoginFacebook: -1105
+};

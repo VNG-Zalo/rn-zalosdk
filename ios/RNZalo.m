@@ -105,7 +105,7 @@ RCT_EXPORT_METHOD(isAuthenticate: (RCTResponseSenderBlock) successCallback
                 }]);
             } else if (response.errorCode != kZaloSDKErrorCodeUserCancel) {
                 failureCallback(
-                                [[NSError alloc] initWithDomain:@"Zalo Oauth"
+                                [NSError errorWithDomain:@"Zalo Oauth"
                                                            code:response.errorCode
                                                        userInfo:@{@"message": response.errorMessage}]
                                 );
