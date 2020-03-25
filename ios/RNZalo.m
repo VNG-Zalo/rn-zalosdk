@@ -36,14 +36,14 @@ RCT_REMAP_METHOD(login,
 
 RCT_EXPORT_METHOD(loginWithType:(NSInteger) type
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failedCallback: (RCTResponseErrorBlock) failedCallback)
+                  failedCallback: (RCTResponseSenderBlock) failureCallback)
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         UIViewController *presentedViewController = RCTPresentedViewController();
-        enum ZAZaloSDKAuthenType login_type = ZAZAloSDKAuthenTypeViaZaloAppAndWebView;
-        if (type == 1) {
+        enum ZAZaloSDKAuthenType login_type = ZAZAloSDKAuthenTypeViaZaloAppAndWebView; // app or web
+        if (type == 1) { // app
             login_type = ZAZaloSDKAuthenTypeViaZaloAppOnly;
-        } else if (type == 2){
+        } else if (type == 2){ // web
             login_type = ZAZaloSDKAuthenTypeViaWebViewOnly;
         }
         
@@ -53,14 +53,13 @@ RCT_EXPORT_METHOD(loginWithType:(NSInteger) type
             if([response isSucess]) {
                 NSString * oauthCode = response.oauthCode;
                 successCallback(@[@{ @"oauth_code": oauthCode}]);
-            } else if(response.errorCode != kZaloSDKErrorCodeUserCancel) {
-                // convert int or long to string
-                NSError * error  = [
-                                    NSError errorWithDomain:@"Login error"
-                                    code:response.errorCode
-                                    userInfo:@{@"message":response.errorMessage}
-                                    ];
-                failedCallback(error);
+            } else {
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage,
+                    }
+                ]);
             }
         }];
     });
@@ -69,23 +68,25 @@ RCT_EXPORT_METHOD(loginWithType:(NSInteger) type
 
 
 
-RCT_EXPORT_METHOD(logout) {
+RCT_EXPORT_METHOD(logout:(RCTResponseSenderBlock)successCallback) {
     [[ZaloSDK sharedInstance] unauthenticate];
+    successCallback(@[]);
 }
 
 RCT_EXPORT_METHOD(getProfile: (RCTResponseSenderBlock)successCallback
-                  failureCallback: (RCTResponseErrorBlock)failureCallback) {
+                  failureCallback: (RCTResponseSenderBlock)failureCallback) {
     [[ZaloSDK sharedInstance] getZaloUserProfileWithCallback:
      ^(ZOGraphResponseObject *response) {
         
         if(response.errorCode == kZaloSDKErrorCodeNoneError) {
             successCallback(@[response.data]);
         } else {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
+            failureCallback(@[
+                @{
+                    @"error_code": @(response.errorCode),
+                    @"error_message": response.errorMessage,
+                }
+            ]);
         }
     }];
     
@@ -93,23 +94,20 @@ RCT_EXPORT_METHOD(getProfile: (RCTResponseSenderBlock)successCallback
 }
 
 RCT_EXPORT_METHOD(isAuthenticate: (RCTResponseSenderBlock) successCallback
-                  failureCallback:(RCTResponseErrorBlock) failureCallback) {
+                  failureCallback:(RCTResponseSenderBlock) failureCallback) {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[ZaloSDK sharedInstance] isAuthenticatedZaloWithCompletionHandler:^(ZOOauthCheckingResponseObject *response) {
             if (response.errorCode == kZaloSDKErrorCodeNoneError ){
                 successCallback(@[@{
-                                      @"displayName":response.displayName,
-                                      @"phoneNumber":response.phoneNumber,
-                                      @"isRegister":@(response.isRegister),
-                                      @"gender":response.gender
+                                      @"oauth_code":response.oauthCode
                 }]);
-            } else if (response.errorCode != kZaloSDKErrorCodeUserCancel) {
-                failureCallback(
-                                [NSError errorWithDomain:@"Zalo Oauth"
-                                                           code:response.errorCode
-                                                       userInfo:@{@"message": response.errorMessage}]
-                                );
-                
+            } else {
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage
+                    }
+                ]);
             }
         }];
     });
@@ -118,7 +116,7 @@ RCT_EXPORT_METHOD(isAuthenticate: (RCTResponseSenderBlock) successCallback
 RCT_EXPORT_METHOD(sendOfficalAccountMessageWith: (NSString*) template_id
                   templdateData  : (NSDictionary *) template_data
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback) {
+                  failureCallback: (RCTResponseSenderBlock) failureCallback) {
     [[ZaloSDK sharedInstance] sendOfficalAccountMessageWith:template_id
                                                templateData:template_data
                                                    callback:^(ZOGraphResponseObject *response) {
@@ -126,11 +124,12 @@ RCT_EXPORT_METHOD(sendOfficalAccountMessageWith: (NSString*) template_id
         if(response.errorCode == kZaloSDKErrorCodeNoneError) {
             successCallback(@[response.data]);
         } else {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
+            failureCallback(@[
+                @{
+                    @"error_code": @(response.errorCode),
+                    @"error_message": response.errorMessage
+                }
+            ]);
         }
     }];
 }
@@ -139,7 +138,7 @@ RCT_EXPORT_METHOD(sendMessageTo: (NSString*) str_friend_id
                   withMessage:(NSString*) str_message
                   witLink:(NSString*) str_link
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback) {
+                  failureCallback: (RCTResponseSenderBlock) failureCallback) {
     [[ZaloSDK sharedInstance] sendMessageTo:str_friend_id
                                     message:str_message
                                        link:str_link
@@ -148,11 +147,12 @@ RCT_EXPORT_METHOD(sendMessageTo: (NSString*) str_friend_id
         if(response.errorCode == kZaloSDKErrorCodeNoneError) {
             successCallback(@[response.data]);
         } else {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
+            failureCallback(@[
+                @{
+                    @"error_code": @(response.errorCode),
+                    @"error_message": response.errorMessage
+                }
+            ]);
         }
     }];
 }
@@ -161,18 +161,19 @@ RCT_EXPORT_METHOD(sendMessageTo: (NSString*) str_friend_id
 RCT_EXPORT_METHOD(sendAppRequestTo: (NSString*) str_friend_id
                   withMessage:(NSString*) str_message
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback) {
+                  failureCallback: (RCTResponseSenderBlock) failureCallback) {
     [[ZaloSDK sharedInstance] sendAppRequestTo:str_friend_id
                                        message:str_message
                                       callback:^(ZOGraphResponseObject *response) {
         if(response.errorCode == kZaloSDKErrorCodeNoneError) {
             successCallback(@[response.data]);
         } else {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
+            failureCallback(@[
+                @{
+                    @"error_code": @(response.errorCode),
+                    @"error_message": response.errorMessage
+                }
+            ]);
         }
     }];
 }
@@ -180,18 +181,19 @@ RCT_EXPORT_METHOD(sendAppRequestTo: (NSString*) str_friend_id
 RCT_EXPORT_METHOD(postFeedWithMessage:(NSString*) str_message
                   withLink: (NSString*) str_link
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
     [[ZaloSDK sharedInstance] postFeedWithMessage:str_message
                                              link:str_link
                                          callback:^(ZOGraphResponseObject *response) {
         if (response.errorCode == kZaloSDKErrorCodeNoneError) {
             successCallback(@[response.data]);
         } else {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
+            failureCallback(@[
+                @{
+                    @"error_code": @(response.errorCode),
+                    @"error_message": response.errorMessage
+                }
+            ]);
         }
     }];
 }
@@ -199,7 +201,7 @@ RCT_EXPORT_METHOD(postFeedWithMessage:(NSString*) str_message
 RCT_EXPORT_METHOD(getUserFriendListAtOffset:(NSUInteger) ui_offset
                   withCount: (NSUInteger) ui_count
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
     
     [[ZaloSDK sharedInstance] getUserFriendListAtOffset:ui_offset
                                                   count:ui_count
@@ -207,11 +209,12 @@ RCT_EXPORT_METHOD(getUserFriendListAtOffset:(NSUInteger) ui_offset
         if (response.errorCode == kZaloSDKErrorCodeNoneError) {
             successCallback(@[response.data]);
         } else {
-            failureCallback(
-                            [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                       code:response.errorCode
-                                                   userInfo:@{@"message": response.errorMessage}]
-                            );
+            failureCallback(@[
+                @{
+                    @"error_code": @(response.errorCode),
+                    @"error_message": response.errorMessage
+                }
+            ]);
         }
     }];
 }
@@ -220,7 +223,7 @@ RCT_EXPORT_METHOD(sendMessage:(NSString*) str_message
                   withAppName: (NSString*) str_app_name
                   withLink: (NSString*) str_link
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
     ZOFeed *zo_feed = [[ZOFeed alloc] initWithLink:str_link
                                            appName:str_app_name
                                            message:str_message
@@ -233,11 +236,12 @@ RCT_EXPORT_METHOD(sendMessage:(NSString*) str_message
             if ([response isSucess]){
                 successCallback(@[response]);
             } else {
-                failureCallback(
-                                [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                           code:response.errorCode
-                                                       userInfo:@{@"message": response.errorMessage}]
-                                );
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage
+                    }
+                ]);
             }
         }];
     });
@@ -247,7 +251,7 @@ RCT_EXPORT_METHOD(shareFeed:(NSString*) str_message
                   withAppName: (NSString*) str_app_name
                   withLink: (NSString*) str_link
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
     ZOFeed *zo_feed = [[ZOFeed alloc] initWithLink:str_link
                                            appName:str_app_name
                                            message:str_message
@@ -260,11 +264,12 @@ RCT_EXPORT_METHOD(shareFeed:(NSString*) str_message
             if ([response isSucess]){
                 successCallback(@[response]);
             } else {
-                failureCallback(
-                                [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                                           code:response.errorCode
-                                                       userInfo:@{@"message": response.errorMessage}]
-                                );
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage
+                    }
+                ]);
             }
         }];
     });
@@ -273,10 +278,10 @@ RCT_EXPORT_METHOD(shareFeed:(NSString*) str_message
 
 RCT_EXPORT_METHOD(getSettings:(NSDictionary*) args
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
     successCallback(@[
         @{
-            @"appid": [[ZaloSDK sharedInstance] appId],
+            @"app_id": [[ZaloSDK sharedInstance] appId],
             @"version": [[ZaloSDK sharedInstance] version],
         }]);
     //     NSString* errMsg = @"Method not implement";
@@ -285,18 +290,49 @@ RCT_EXPORT_METHOD(getSettings:(NSDictionary*) args
     //                      initWithDomain:@"Zalo Oauth"
     //                      code: 0
     //                      userInfo:@{@"message": errMsg }]);
- }
+}
 
 RCT_EXPORT_METHOD(getDeviceID:(NSDictionary*) args
                   successCallback: (RCTResponseSenderBlock) successCallback
-                  failureCallback: (RCTResponseErrorBlock) failureCallback ){
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
     //    successCallback(@[response]);
-    failureCallback(
-                    [[NSError alloc] initWithDomain:@"Zalo Oauth"
-                                               code:-1
-                                           userInfo:@{@"message": @"Method not implement"}]
-                    );
+    failureCallback( @[
+        @{
+            @"error_message":@"Method not implement",
+            @"error_code" : @(-1),
+        }
+    ]);
+}
+RCT_EXPORT_METHOD(RegisterZalo: (RCTResponseSenderBlock) successCallback
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *presentedViewController = RCTPresentedViewController();
+        [[ZaloSDK sharedInstance] registZaloAccountWithParentController:presentedViewController
+                                                                handler:^(ZOOauthResponseObject *response){
+            if([response isSucess]) {
+                NSString * oauthCode = response.oauthCode;
+                successCallback(@[@{ @"oauth_code": oauthCode}]);
+            } else {
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage,
+                    }
+                ]);
+            }
+            
+        }];
+    });
+}
+
+RCT_EXPORT_METHOD(CheckZaloLoginStatus: (RCTResponseSenderBlock) successCallback
+                  failureCallback: (RCTResponseSenderBlock) failureCallback ){
+    failureCallback( @[
+        @{
+            @"error_message":@"Method not implement",
+            @"error_code" : @(-1),
+        }
+    ]);
 }
 
 @end
-

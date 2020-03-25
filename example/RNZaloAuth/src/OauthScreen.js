@@ -1,6 +1,6 @@
 import React, { Component, useContext } from 'react';
 import { Alert, ScrollView, Text, TouchableOpacity, AlertIOS, View } from 'react-native';
-import RNZaloSDK, { ErrorCode } from 'rn-zalo';
+import RNZaloSDK, { ErrorCode, LoginType } from 'rn-zalo';
 import { LoginProvider, LoginContext } from './Context/Login';
 import LogStateView from './components/LogStateView';
 import { ToastAndroid } from 'react-native';
@@ -10,7 +10,7 @@ const ShowToast = msg => {
     if (Platform.OS === 'android') {
         ToastAndroid.show(msg, ToastAndroid.SHORT);
     } else {
-        AlertIOS.alert(msg);
+        Alert.alert(msg);
     }
 };
 const OauthScreen = props => {
@@ -24,15 +24,12 @@ const OauthScreen = props => {
     const onError = err => {
         if (err.error_code === ErrorCode.ZaloApplicationNotInstalled) {
             Alert.alert('Để dùng tính năng này cần phải install app Zalo ');
-        }
-        if (err.error_code === ErrorCode.ZaloOauthInvalid) {
+        } else if (err.error_code === ErrorCode.ZaloOauthInvalid) {
             ShowToast('Validate failed');
-        }
-        if (err.error_code === ErrorCode.UserBack) {
-            ShowToast('Login failed');
-        }
-        if (err.error_code === ErrorCode.UnknownError) {
-            ShowToast('Unknown error');
+        } else if (err.error_code === ErrorCode.UserBack) {
+            ShowToast(err.error_message ? err.error_message : 'Login failed');
+        } else {
+            ShowToast(err.error_message ? err.error_message : 'Unknown error');
         }
         setState({ ...state, err });
     };
@@ -53,7 +50,7 @@ const OauthScreen = props => {
                         testID="btn_oauth_by_app"
                         accessibilityLabel="btn_oauth_by_app"
                         onPress={() => {
-                            RNZaloSDK.login(1)
+                            RNZaloSDK.login(LoginType.App)
                                 .then(data => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
                                     ShowToast('Login successed');
@@ -71,7 +68,7 @@ const OauthScreen = props => {
                         testID="btn_oauth_by_web"
                         accessibilityLabel="btn_oauth_by_web"
                         onPress={() => {
-                            RNZaloSDK.login(2)
+                            RNZaloSDK.login(LoginType.Web)
                                 .then(data => {
                                     setState(old_state => ({ ...old_state, ...data, err: null }));
                                     ShowToast('Login successed');
