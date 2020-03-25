@@ -274,14 +274,18 @@ RCT_EXPORT_METHOD(shareFeed:(NSString*) str_message
 RCT_EXPORT_METHOD(getSettings:(NSDictionary*) args
                   successCallback: (RCTResponseSenderBlock) successCallback
                   failureCallback: (RCTResponseErrorBlock) failureCallback ){
-    //    successCallback(@[response]);
-    NSString* errMsg = @"Method not implement";
-    failureCallback(
-                    [[NSError alloc]
-                     initWithDomain:@"Zalo Oauth"
-                     code: -1
-                     userInfo:@{@"message": errMsg }]);
-}
+    successCallback(@[
+        @{
+            @"appid": [[ZaloSDK sharedInstance] appId],
+            @"version": [[ZaloSDK sharedInstance] version],
+        }]);
+    //     NSString* errMsg = @"Method not implement";
+    //     failureCallback(
+    //                     [[NSError alloc]
+    //                      initWithDomain:@"Zalo Oauth"
+    //                      code: 0
+    //                      userInfo:@{@"message": errMsg }]);
+ }
 
 RCT_EXPORT_METHOD(getDeviceID:(NSDictionary*) args
                   successCallback: (RCTResponseSenderBlock) successCallback

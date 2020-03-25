@@ -110,6 +110,7 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public void logout() {
         this.mSDk.unAuthenticate();
+        this.mOpenAPI = null;
     }
 
     @ReactMethod

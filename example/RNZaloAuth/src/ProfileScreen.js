@@ -129,7 +129,7 @@ const ProfileScreen = props => {
                             Alert.alert('Xin hãy nhấn button "Lấy danh sách friend đã sử dụng ứng dụng "');
                             return;
                         }
-                        RNZaloSDK.sendOfficalAccountMessageWith(state.data[0].id, {})
+                        RNZaloSDK.sendOfficalAccountMessageWith(state.data.data[0].id, {})
                             .then(data => {
                                 setState(old_state => ({ ...old_state, send_msg_oa: data, err: null }));
                             })
