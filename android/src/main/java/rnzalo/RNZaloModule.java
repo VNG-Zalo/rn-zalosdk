@@ -21,6 +21,7 @@ import com.zing.zalo.zalosdk.kotlin.core.settings.SettingsManager;
 import com.zing.zalo.zalosdk.kotlin.oauth.IAuthenticateCompleteListener;
 import com.zing.zalo.zalosdk.kotlin.oauth.LoginVia;
 import com.zing.zalo.zalosdk.kotlin.oauth.ZaloSDK;
+import com.zing.zalo.zalosdk.kotlin.oauth.callback.GetZaloLoginStatus;
 import com.zing.zalo.zalosdk.kotlin.oauth.callback.ValidateOAuthCodeCallback;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloOpenApi;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloOpenApiCallback;
@@ -85,7 +86,7 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                 login_type = LoginVia.WEB;
                 break;
         }
-        this.mSDk.authenticate(this.mReactContext.getCurrentActivity(), LoginVia.APP_OR_WEB, new IAuthenticateCompleteListener() {
+        this.mSDk.authenticate(this.mReactContext.getCurrentActivity(), login_type, new IAuthenticateCompleteListener() {
 
             @Override
             public void onAuthenticateSuccess(long uid, @NotNull String oauthCode, @NotNull Map<String, ?> data) {
@@ -101,8 +102,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
 
             @Override
             public void onAuthenticateError(int errorCode, @NotNull String message) {
-                final String code = errorCode + "";
-                errorCallback.invoke(code, message);
+                final WritableMap err = Arguments.createMap();
+                err.putInt("error_code", errorCode);
+                err.putString("error_message", message);
+                errorCallback.invoke(err);
             }
         });
     }
@@ -111,6 +114,24 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     public void logout() {
         this.mSDk.unAuthenticate();
         this.mOpenAPI = null;
+    }
+
+    @ReactMethod
+    public void CheckZaloLoginStatus(final Callback successCallback, final Callback errorCallback) {
+        this.mSDk.getZaloLoginStatus(new GetZaloLoginStatus() {
+            @Override
+            public void onGetZaloLoginStatusCompleted(int status) {
+                if (status >= 0 && status < 2) {
+                    final WritableMap params = Arguments.createMap();
+                    params.putInt("status", status);
+                    successCallback.invoke(params);
+                } else {
+                    final WritableMap params = Arguments.createMap();
+                    params.putInt("error_code", status);
+                    errorCallback.invoke(params);
+                }
+            }
+        });
     }
 
     @ReactMethod
@@ -126,7 +147,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                             mOpenAPI = new ZaloOpenApi(mReactContext, oauthCode);
                             successCallback.invoke(params);
                         } else {
-                            errorCallback.invoke(errorCode);
+                            final WritableMap err = Arguments.createMap();
+                            err.putInt("error_code", errorCode);
+                            errorCallback.invoke(err);
                         }
 
                     }
@@ -144,7 +167,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     public int getProfile(final Callback successCallback, final Callback errorCallback) {
         final String[] Fields = {"id", "birthday", "gender", "picture", "name"};
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         this.mOpenAPI.getProfile(Fields, new ZaloOpenApiCallback() {
@@ -154,8 +179,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                     WritableMap user = UtilService.convertJsonToMap(data);
                     successCallback.invoke(user);
                 } catch (Exception ex) {
-                    String message = ex.getMessage();
-                    errorCallback.invoke("Get profile error", message);
+                    final WritableMap err = Arguments.createMap();
+                    err.putString("error_message", ex.getMessage());
+                    err.putString("error_trace", ex.toString());
+                    errorCallback.invoke(err);
                 }
             }
         });
@@ -164,14 +191,18 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
 
     @ReactMethod
     public int sendOfficalAccontMassageWith(String id, String data, Callback successCallback, Callback errorCallback) {
-        errorCallback.invoke("ZaloSDK not suppport for android");
+        final WritableMap err = Arguments.createMap();
+        err.putString("error_message", "RNZaloSDK not suppport for android");
+        errorCallback.invoke(err);
         return -1;
     }
 
     @ReactMethod
     public int sendMessageTo(String friend_id, String message, String link, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         this.mOpenAPI.sendMsgToFriend(friend_id, message, link, new ZaloOpenApiCallback() {
@@ -181,8 +212,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                     WritableMap user = UtilService.convertJsonToMap(data);
                     successCallback.invoke(user);
                 } catch (Exception ex) {
-                    String message = ex.getMessage();
-                    errorCallback.invoke("Get profile error", message);
+                    final WritableMap err = Arguments.createMap();
+                    err.putString("error_message", ex.getMessage());
+                    err.putString("error_trace", ex.toString());
+                    errorCallback.invoke(err);
                 }
             }
         });
@@ -192,7 +225,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public int sendAppRequestTo(String friend_id, String message, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         this.mOpenAPI.inviteFriendUseApp(friend_id.split(","), message, new ZaloOpenApiCallback() {
@@ -202,8 +237,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                     WritableMap user = UtilService.convertJsonToMap(data);
                     successCallback.invoke(user);
                 } catch (Exception ex) {
-                    String message = ex.getMessage();
-                    errorCallback.invoke("Get profile error", message);
+                    final WritableMap err = Arguments.createMap();
+                    err.putString("error_message", ex.getMessage());
+                    err.putString("error_trace", ex.toString());
+                    errorCallback.invoke(err);
                 }
             }
         });
@@ -213,7 +250,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public int postFeedWithMessage(String message, String link, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         this.mOpenAPI.postToWall(link, message, new ZaloOpenApiCallback() {
@@ -223,8 +262,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                     WritableMap user = UtilService.convertJsonToMap(data);
                     successCallback.invoke(user);
                 } catch (Exception ex) {
-                    String message = ex.getMessage();
-                    errorCallback.invoke("Get profile error", message);
+                    final WritableMap err = Arguments.createMap();
+                    err.putString("error_message", ex.getMessage());
+                    err.putString("error_trace", ex.toString());
+                    errorCallback.invoke(err);
                 }
             }
         });
@@ -234,7 +275,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public int getUserFriendListAtOffset(int start, int count, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         this.mOpenAPI.getFriendListUsedApp(
@@ -248,8 +291,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                             WritableMap user = UtilService.convertJsonToMap(data);
                             successCallback.invoke(user);
                         } catch (Exception ex) {
-                            String message = ex.getMessage();
-                            errorCallback.invoke("Get profile error", message);
+                            final WritableMap err = Arguments.createMap();
+                            err.putString("error_message", ex.getMessage());
+                            err.putString("error_trace", ex.toString());
+                            errorCallback.invoke(err);
                         }
                     }
                 });
@@ -259,7 +304,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public int getUserInvitableFriendListAtOffset(int start, int count, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         this.mOpenAPI.getFriendListInvitable(
@@ -275,8 +322,10 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                             WritableMap user = UtilService.convertJsonToMap(data);
                             successCallback.invoke(user);
                         } catch (Exception ex) {
-                            String message = ex.getMessage();
-                            errorCallback.invoke("Get profile error", message);
+                            final WritableMap err = Arguments.createMap();
+                            err.putString("error_message", ex.getMessage());
+                            err.putString("error_trace", ex.toString());
+                            errorCallback.invoke(err);
                         }
                     }
                 });
@@ -286,7 +335,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public int shareMessage(String message, String app_name, String link, ReadableMap dict_others, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         FeedData feed_data = new FeedData(message, "", link, new ArrayList<String>(), "", "");
@@ -294,14 +345,20 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             @Override
             public void onResult(boolean isSuccess, int errCode, @Nullable String messageStr, @Nullable String jsonStr) {
                 if (!isSuccess) {
-                    errorCallback.invoke(errCode, messageStr);
+                    final WritableMap err = Arguments.createMap();
+                    err.putInt("error_code", errCode);
+                    err.putString("error_message", messageStr);
+                    errorCallback.invoke(err);
+                    return;
                 }
                 try {
                     WritableMap user = UtilService.convertJsonToMap(new JSONObject(jsonStr));
                     successCallback.invoke(user);
                 } catch (Exception ex) {
-                    String message = ex.getMessage();
-                    errorCallback.invoke("Get profile error", message);
+                    final WritableMap err = Arguments.createMap();
+                    err.putString("error_message", ex.getMessage());
+                    err.putString("error_trace", ex.toString());
+                    errorCallback.invoke(err);
                 }
             }
         });
@@ -311,7 +368,9 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public int shareFeed(String message, String app_name, String link, ReadableMap dict_others, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
-            errorCallback.invoke("Not authentication");
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", "Not authentication");
+            errorCallback.invoke(err);
             return -1;
         }
         FeedData feed_data = new FeedData(message, "", link, new ArrayList<String>(), "", "");
@@ -319,14 +378,20 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             @Override
             public void onResult(boolean isSuccess, int errCode, @Nullable String messageStr, @Nullable String jsonStr) {
                 if (!isSuccess) {
-                    errorCallback.invoke(errCode, messageStr);
+                    final WritableMap err = Arguments.createMap();
+                    err.putInt("error_code", errCode);
+                    err.putString("error_message", messageStr);
+                    errorCallback.invoke(err);
+                    return;
                 }
                 try {
                     WritableMap user = UtilService.convertJsonToMap(new JSONObject(jsonStr));
                     successCallback.invoke(user);
                 } catch (Exception ex) {
-                    String message = ex.getMessage();
-                    errorCallback.invoke("Get profile error", message);
+                    final WritableMap err = Arguments.createMap();
+                    err.putString("error_message", ex.getMessage());
+                    err.putString("error_trace", ex.toString());
+                    errorCallback.invoke(err);
                 }
             }
         });
@@ -345,8 +410,11 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             result.putString("sdk_version", AppInfo.getInstance().getSDKVersion());
             result.putString("app_id", getReactApplicationContext().getString(R.string.appID));
             successCallback.invoke(result);
-        } catch (Exception e) {
-            errorCallback.invoke(e);
+        } catch (Exception ex) {
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", ex.getMessage());
+            err.putString("error_trace", ex.toString());
+            errorCallback.invoke(err);
         }
         return 0;
     }
@@ -363,8 +431,11 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             }
             result.putArray("events", arr_events);
             successCallback.invoke(result);
-        } catch (Exception e) {
-            errorCallback.invoke(e);
+        } catch (Exception ex) {
+            final WritableMap err = Arguments.createMap();
+            err.putString("error_message", ex.getMessage());
+            err.putString("error_trace", ex.toString());
+            errorCallback.invoke(err);
         }
         return 0;
     }
