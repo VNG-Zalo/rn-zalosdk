@@ -49,9 +49,14 @@ dependencies {
     def sdkVersion = "2.5.0316"
     implementation "com.zing.zalo.zalosdk.kotlin:core:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:auth:$sdkVersion"
+    implementation "com.zing.zalo.zalosdk.kotlin:authext:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:openapi:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:analytics:$sdkVersion"
 
+    implementation "com.android.support:appcompat-v7:+"
+    implementation 'androidx.appcompat:appcompat:+'
+    implementation "androidx.lifecycle:lifecycle-extensions:+"
+    implementation 'androidx.constraintlayout:constraintlayout:+'
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
   

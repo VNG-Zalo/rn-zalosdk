@@ -51,6 +51,14 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
+    public void start_ext_oauth(final Callback successCallback, final Callback failureCallback) {
+        Intent intent =new Intent(this.mReactContext, rnzalo.ExtLoginActivity.class) ;
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.mReactContext.startActivity(intent);
+        final WritableMap params = Arguments.createMap();
+        successCallback.invoke(params);
+    }
+    @ReactMethod
     public void login(final Promise promise) {
         this.mSDk.unAuthenticate();
         this.mSDk.authenticate(this.mReactContext.getCurrentActivity(), LoginVia.APP_OR_WEB, new IAuthenticateCompleteListener() {

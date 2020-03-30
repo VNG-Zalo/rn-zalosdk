@@ -8,32 +8,32 @@ class RNZaloSDK {
       // const oauth_code = await RNZalo.login();
       return new Promise((resolve, reject) => {
         RNZalo.login()
-          .then(oauth_code => {
+          .then((oauth_code) => {
             this.getProfile()
-              .then(data => {
+              .then((data) => {
                 resolve({ ...data, oauth_code });
               })
-              .catch(e => {
+              .catch((e) => {
                 reject(e);
               });
           })
-          .catch(e => {
+          .catch((e) => {
             reject(e);
           });
       });
     } else {
       return new Promise((resolve, reject) => {
         RNZalo.login()
-          .then(login_data => {
+          .then((login_data) => {
             this.getProfile()
-              .then(data => {
+              .then((data) => {
                 resolve({ ...data, oauth_code: login_data.oauthCode });
               })
-              .catch(e => {
+              .catch((e) => {
                 reject(e);
               });
           })
-          .catch(e => {
+          .catch((e) => {
             reject(e);
           });
       });
@@ -41,16 +41,29 @@ class RNZaloSDK {
   }
 
   // type: 0 - web or app, 1 - app, 2 - web
-  static login(type = LoginType.AppOrWeb) {
+  static login(type: LoginType = LoginType.AppOrWeb) {
     return new Promise((resolve, reject) => {
       console.log("call login with type");
       RNZalo.loginWithType(
         type,
-        data => {
+        (data) => {
           resolve({ ...data });
         },
-        e => {
+        (e) => {
           reject(e);
+        }
+      );
+    });
+  }
+
+  static startExtOauth() {
+    return new Promise((resolve, reject) => {
+      RNZalo.start_ext_oauth(
+        (data) => {
+          resolve(data);
+        },
+        (err) => {
+          reject(err);
         }
       );
     });
@@ -59,10 +72,10 @@ class RNZaloSDK {
   static registerZalo() {
     return new Promise((resolve, reject) => {
       RNZalo.RegisterZalo(
-        data => {
+        (data) => {
           resolve(data);
         },
-        err => {
+        (err) => {
           reject(err);
         }
       );
@@ -72,10 +85,10 @@ class RNZaloSDK {
   static checkZaloLoginStatus() {
     return new Promise((resolve, reject) => {
       RNZalo.CheckZaloLoginStatus(
-        data => {
+        (data) => {
           resolve(data);
         },
-        err => {
+        (err) => {
           reject(err);
         }
       );
@@ -85,12 +98,12 @@ class RNZaloSDK {
   static getProfile() {
     return new Promise((resolve, reject) => {
       RNZalo.getProfile(
-        data => {
+        (data) => {
           resolve({
-            user: data
+            user: data,
           });
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -99,7 +112,7 @@ class RNZaloSDK {
 
   static logout() {
     return new Promise((resolve, reject) => {
-      RNZalo.logout(data => {
+      RNZalo.logout((data) => {
         resolve(data);
       });
     });
@@ -108,25 +121,25 @@ class RNZaloSDK {
   static isAuthenticate() {
     return new Promise((resolve, reject) => {
       RNZalo.isAuthenticate(
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
     });
   }
 
-  static sendOfficalAccountMessageWith(id, data) {
+  static sendOfficalAccountMessageWith(id: string, data: string) {
     return new Promise((resolve, reject) => {
       RNZalo.sendOfficalAccountMessageWith(
         id,
         data,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -139,10 +152,10 @@ class RNZaloSDK {
         friend_id,
         message,
         link,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -154,10 +167,10 @@ class RNZaloSDK {
       RNZalo.sendAppRequestTo(
         friend_id,
         message,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -169,10 +182,10 @@ class RNZaloSDK {
       RNZalo.postFeedWithMessage(
         message,
         link,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -184,10 +197,10 @@ class RNZaloSDK {
       RNZalo.getUserFriendListAtOffset(
         offset_start,
         count,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -199,10 +212,10 @@ class RNZaloSDK {
       RNZalo.getUserInvitableFriendListAtOffset(
         offset_start,
         count,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -216,10 +229,10 @@ class RNZaloSDK {
         app_name,
         link,
         dict_others,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -233,10 +246,10 @@ class RNZaloSDK {
         app_name,
         link,
         dict_others,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -247,10 +260,10 @@ class RNZaloSDK {
     return new Promise((resolve, reject) => {
       RNZalo.getSettings(
         args,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -261,10 +274,10 @@ class RNZaloSDK {
     return new Promise((resolve, reject) => {
       RNZalo.getDeviceID(
         args,
-        data => {
+        (data) => {
           resolve(data);
         },
-        e => {
+        (e) => {
           reject(e);
         }
       );
@@ -276,7 +289,7 @@ export default RNZaloSDK;
 export const LoginType = {
   AppOrWeb: 0,
   App: 1,
-  Web: 2
+  Web: 2,
 };
 export const ErrorCode = {
   NoErr: 0,
@@ -303,5 +316,5 @@ export const ErrorCode = {
   ZaloApplicationNotInstalled: -1024,
   ZaloOutOfDate: -1025,
   CantLoginGoogle: -1205,
-  CantLoginFacebook: -1105
+  CantLoginFacebook: -1105,
 };

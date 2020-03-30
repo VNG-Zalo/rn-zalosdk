@@ -76,8 +76,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
-    enableHermes: true,  // clean and rebuild if changing
+        entryFile   : "index.js",
+        enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -133,6 +133,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testBuildType System.getProperty('testBuildType', 'debug')
         // This will later be used to control the test apk build type
@@ -195,14 +196,17 @@ dependencies {
     def sdkVersion = "2.5.0316"
     implementation "com.zing.zalo.zalosdk.kotlin:core:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:auth:$sdkVersion"
+    implementation "com.zing.zalo.zalosdk.kotlin:authext:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:openapi:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:analytics:$sdkVersion"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:0.20.1"  // From node_modules
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     androidTestImplementation 'junit:junit:4.12'
-       if (enableHermes) {
+    if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")

@@ -10,7 +10,7 @@ import PluginsScreen from './PluginsScreen';
 import TrackingScreen from './TrackingScreen';
 import SettingsScreen from './SettingsScreen';
 import RNZaloSDK from 'rn-zalo';
-import Modal, { ModalTitle, ModalButton, ModalContent, ModalFooter } from 'react-native-modals';
+import Modal, { ModalButton, ModalContent, ModalFooter } from 'react-native-modals';
 
 import { LoginProvider, LoginContext } from './Context/Login';
 import LogStateView from './components/LogStateView';

@@ -104,6 +104,23 @@ const OauthScreen = props => {
                         testID="btn_register_zalo"
                         accessibilityLabel="btn_register_zalo"
                         onPress={() => {
+                            RNZaloSDK.startExtOauth()
+                                .then(data => {
+                                    setState({ ...state, ...data, err: null });
+                                })
+                                .catch(err => {
+                                    onError(err);
+                                });
+                        }}
+                    >
+                        <Text style={textStyle}>Start Ext Oauth</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={buttonStyle}
+                        key="btn_register_zalo"
+                        testID="btn_register_zalo"
+                        accessibilityLabel="btn_register_zalo"
+                        onPress={() => {
                             RNZaloSDK.registerZalo()
                                 .then(data => {
                                     setState({ ...state, ...data, err: null });
