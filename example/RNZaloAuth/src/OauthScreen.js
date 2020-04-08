@@ -100,11 +100,11 @@ const OauthScreen = props => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}
-                        key="btn_register_zalo"
-                        testID="btn_register_zalo"
-                        accessibilityLabel="btn_register_zalo"
+                        key="btn_login_form"
+                        testID="btn_login_form"
+                        accessibilityLabel="btn_login_form"
                         onPress={() => {
-                            RNZaloSDK.startExtOauth()
+                            RNZaloSDK.startLoginForm()
                                 .then(data => {
                                     setState({ ...state, ...data, err: null });
                                 })
@@ -113,7 +113,41 @@ const OauthScreen = props => {
                                 });
                         }}
                     >
-                        <Text style={textStyle}>Start Ext Oauth</Text>
+                        <Text style={textStyle}>Login Form</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={buttonStyle}
+                        key="btn_login_google_plus"
+                        testID="btn_login_google_plus"
+                        accessibilityLabel="btn_login_google_plus"
+                        onPress={() => {
+                            RNZaloSDK.startAuthenGooglePlus()
+                                .then(data => {
+                                    setState({ ...state, ...data, err: null });
+                                })
+                                .catch(err => {
+                                    onError(err);
+                                });
+                        }}
+                    >
+                        <Text style={textStyle}>Login Google+</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={buttonStyle}
+                        key="btn_login_facebook"
+                        testID="btn_login_facebook"
+                        accessibilityLabel="btn_login_facebook"
+                        onPress={() => {
+                            RNZaloSDK.startAuthenFacebook()
+                                .then(data => {
+                                    setState({ ...state, ...data, err: null });
+                                })
+                                .catch(err => {
+                                    onError(err);
+                                });
+                        }}
+                    >
+                        <Text style={textStyle}>Login Facebook</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={buttonStyle}

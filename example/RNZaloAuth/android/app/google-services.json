@@ -1,0 +1,215 @@
+{
+  "project_info": {
+    "project_number": "23729135720",
+    "firebase_url": "https://zalodev.firebaseio.com",
+    "project_id": "zalodev",
+    "storage_bucket": "zalodev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23729135720:android:c8ea6f764bdbb4154ddbdd",
+        "android_client_info": {
+          "package_name": "com.example.javaexample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23729135720-mhregmfmtp9tftmetuft4k40iljas3mr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.javaexample",
+            "certificate_hash": "1156a3aa8dd0e63ac57641286c82ebc007dcabb7"
+          }
+        },
+        {
+          "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsqp023AbeHMyqhEB0w3i6DPa5K28u-yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23729135720:android:dd499bb0b779e1bb4ddbdd",
+        "android_client_info": {
+          "package_name": "com.rnzaloauth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsqp023AbeHMyqhEB0w3i6DPa5K28u-yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23729135720:android:fa3df67aba48509b",
+        "android_client_info": {
+          "package_name": "com.vng.zing.vn.zrtc.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsqp023AbeHMyqhEB0w3i6DPa5K28u-yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23729135720:android:7eac448b449e70a5",
+        "android_client_info": {
+          "package_name": "com.vng.zing.zdice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23729135720-027f01a6t6i375hcd2hak4bhdlsdrrgb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vng.zing.zdice",
+            "certificate_hash": "c118031c9908ae30fd1246303c8aeb9cac5b77ba"
+          }
+        },
+        {
+          "client_id": "23729135720-ctvdvo73jj6hpiaqvqf1d6kor56v1b0r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vng.zing.zdice",
+            "certificate_hash": "880f351fd9f4fccc45b3258ea613ac586f67ef26"
+          }
+        },
+        {
+          "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsqp023AbeHMyqhEB0w3i6DPa5K28u-yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23729135720:android:73f501dea9640329",
+        "android_client_info": {
+          "package_name": "com.zing.zalo.mycallapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsqp023AbeHMyqhEB0w3i6DPa5K28u-yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

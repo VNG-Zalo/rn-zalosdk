@@ -12,8 +12,8 @@
         "clean": "watchman watch-del-all && rm -rf node_modules && npx yarn cache clean && npx yarn install",
         "clean_ios": "cd ios && rm -rf Pods && rm -f Podfile.lock && rm -rf RNZaloAuth.xcworkspace && npx pod install && open RNZaloAuth.xcworkspace",
         "pretty": "prettier --write \"src/**/*.js\"",
-        "build:ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
-        "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle"
+        "build:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
+        "build:android": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug"
     },
     "dependencies": {
         "@babel/runtime": "^7.8.4",

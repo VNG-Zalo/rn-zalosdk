@@ -2,6 +2,7 @@ package rnzalo;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -27,6 +28,9 @@ import com.zing.zalo.zalosdk.kotlin.openapi.ZaloOpenApi;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloOpenApiCallback;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloPluginCallback;
 import com.zing.zalo.zalosdk.kotlin.openapi.model.FeedData;
+import com.zing.zalo.zalosdk.oauth.AuthenticateExtention;
+import com.zing.zalo.zalosdk.oauth.OAuthCompleteListener;
+import com.zing.zalo.zalosdk.oauth.OauthResponse;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,8 +42,10 @@ import java.util.Map;
 public class RNZaloModule extends ReactContextBaseJavaModule implements ActivityEventListener {
 
     private final ReactApplicationContext mReactContext;
+    private final OAuthCompleteListener mListener;
     private ZaloSDK mSDk;
     private ZaloOpenApi mOpenAPI;
+    private AuthenticateExtention mAuthExt;
 
 
     public RNZaloModule(ReactApplicationContext reactContext) {
@@ -48,16 +54,75 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
         this.mReactContext.addActivityEventListener(this);
         this.mSDk = new ZaloSDK(reactContext);
         this.mOpenAPI = null;
+        this.mAuthExt = new AuthenticateExtention(this.mReactContext);
+        this.mListener = new OAuthCompleteListener() {
+
+            public void onGetOAuthComplete(OauthResponse resp) {
+                super.onGetOAuthComplete(resp);
+                Log.println(Log.DEBUG, "GoogleAuthen", resp.oauthCode);
+            }
+
+            public void onAuthenError(int errorCode, String errorMsg) {
+                super.onAuthenError(errorCode, errorMsg);
+                Log.println(Log.DEBUG, "GoogleAuthen", new StringBuilder().append(errorCode).append(errorMsg).toString());
+            }
+        };
     }
 
     @ReactMethod
-    public void start_ext_oauth(final Callback successCallback, final Callback failureCallback) {
-        Intent intent =new Intent(this.mReactContext, rnzalo.ExtLoginActivity.class) ;
+    public void start_login_form(final Callback successCallback, final Callback failureCallback) {
+        Intent intent = new Intent(this.mReactContext, rnzalo.ExtLoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.mReactContext.startActivity(intent);
         final WritableMap params = Arguments.createMap();
         successCallback.invoke(params);
     }
+
+    @ReactMethod
+    public void start_oauth_google(final Callback successCallback, final Callback failureCallback) {
+        final OAuthCompleteListener listener = new OAuthCompleteListener() {
+
+            @Override
+            public void onGetOAuthComplete(OauthResponse resp) {
+                super.onGetOAuthComplete(resp);
+                Log.println(Log.DEBUG, "GoogleAuthen", resp.oauthCode);
+                final WritableMap params = Arguments.createMap();
+                successCallback.invoke(params);
+            }
+
+            @Override
+            public void onAuthenError(int errorCode, String errorMsg) {
+                Log.println(Log.DEBUG, "GoogleAuthen", new StringBuilder().append(errorCode).append(errorMsg).toString());
+                final WritableMap params = Arguments.createMap();
+                failureCallback.invoke(params);
+            }
+        };
+        this.mAuthExt.authenticateWithGooglePlus(this.mReactContext.getCurrentActivity(), listener );
+
+    }
+
+    @ReactMethod
+    public void start_oauth_facebook(final Callback successCallback, final Callback failureCallback) {
+        final OAuthCompleteListener listener = new OAuthCompleteListener() {
+
+            @Override
+            public void onGetOAuthComplete(OauthResponse resp) {
+                super.onGetOAuthComplete(resp);
+                Log.println(Log.DEBUG, "FacebookAuthen", resp.oauthCode);
+                final WritableMap params = Arguments.createMap();
+                successCallback.invoke(params);
+            }
+
+            @Override
+            public void onAuthenError(int errorCode, String errorMsg) {
+                Log.println(Log.DEBUG, "FacebookAuthen", new StringBuilder().append(errorCode).append(errorMsg).toString());
+                final WritableMap params = Arguments.createMap();
+                failureCallback.invoke(params);
+            }
+        };
+        this.mAuthExt.authenticateWithFacebook(this.mReactContext.getCurrentActivity(), listener );
+    }
+
     @ReactMethod
     public void login(final Promise promise) {
         this.mSDk.unAuthenticate();
@@ -128,7 +193,7 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public void RegisterZalo(final Callback successCallback, final  Callback errorCallback) {
+    public void RegisterZalo(final Callback successCallback, final Callback errorCallback) {
         this.mSDk.registerZalo(this.mReactContext.getCurrentActivity(), new IAuthenticateCompleteListener() {
             @Override
             public void onAuthenticateSuccess(long uid, @NotNull String oauth_code, @NotNull Map<String, ?> data) {

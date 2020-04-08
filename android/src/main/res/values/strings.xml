@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">RNZaloSDK</string>
     <string name="appID">1829577289837795818</string>
+    <string name="facebook_appid">789039914458492</string>
+    <string name="zalosdk_login_protocol_schema">zalo-1829577289837795818</string>
 </resources>

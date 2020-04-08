@@ -11,6 +11,7 @@ import TrackingScreen from './TrackingScreen';
 import SettingsScreen from './SettingsScreen';
 import RNZaloSDK from 'rn-zalo';
 import Modal, { ModalButton, ModalContent, ModalFooter } from 'react-native-modals';
+import BackIcon from '../images/back_chevron.png';
 
 import { LoginProvider, LoginContext } from './Context/Login';
 import LogStateView from './components/LogStateView';
@@ -19,7 +20,7 @@ const AppScreen = props => {
     return (
         <LoginProvider>
             <Router>
-                <Scene key="root">
+                <Scene key="root" backButtonImage={BackIcon}>
                     <Scene key="mainscreen" component={MainScreen} title="ZaloSDK Demo" />
                     <Scene key="oauth" component={OauthScreen} title="Oauth Demo" />
                     <Scene key="profile" component={ProfileScreen} title="Profile Demo" />
