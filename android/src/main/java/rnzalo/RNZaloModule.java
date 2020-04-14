@@ -24,6 +24,7 @@ import com.zing.zalo.zalosdk.kotlin.oauth.LoginVia;
 import com.zing.zalo.zalosdk.kotlin.oauth.ZaloSDK;
 import com.zing.zalo.zalosdk.kotlin.oauth.callback.GetZaloLoginStatus;
 import com.zing.zalo.zalosdk.kotlin.oauth.callback.ValidateOAuthCodeCallback;
+import com.zing.zalo.zalosdk.kotlin.oauth.model.ErrorResponse;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloOpenApi;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloOpenApiCallback;
 import com.zing.zalo.zalosdk.kotlin.openapi.ZaloPluginCallback;
@@ -81,53 +82,77 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     @ReactMethod
     public void start_oauth_google(final Callback successCallback, final Callback failureCallback) {
         final OAuthCompleteListener listener = new OAuthCompleteListener() {
-
             @Override
             public void onGetOAuthComplete(OauthResponse resp) {
                 super.onGetOAuthComplete(resp);
                 Log.println(Log.DEBUG, "GoogleAuthen", resp.oauthCode);
                 final WritableMap params = Arguments.createMap();
+                params.putString("oauth_code", "" + resp.oauthCode);
+                params.putString("uId", "" + resp.uId);
                 successCallback.invoke(params);
             }
 
             @Override
             public void onAuthenError(int errorCode, String errorMsg) {
                 Log.println(Log.DEBUG, "GoogleAuthen", new StringBuilder().append(errorCode).append(errorMsg).toString());
-                final WritableMap params = Arguments.createMap();
-                failureCallback.invoke(params);
+                final WritableMap err = Arguments.createMap();
+                err.putInt("error_code", errorCode);
+                err.putString("error_message", errorMsg);
+                failureCallback.invoke(err);
             }
         };
-        this.mAuthExt.authenticateWithGooglePlus(this.mReactContext.getCurrentActivity(), listener );
-
+        this.mReactContext.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                mAuthExt.authenticateWithGooglePlus(mReactContext.getCurrentActivity(), listener);
+            }
+        });
     }
 
     @ReactMethod
     public void start_oauth_facebook(final Callback successCallback, final Callback failureCallback) {
         final OAuthCompleteListener listener = new OAuthCompleteListener() {
-
             @Override
             public void onGetOAuthComplete(OauthResponse resp) {
                 super.onGetOAuthComplete(resp);
                 Log.println(Log.DEBUG, "FacebookAuthen", resp.oauthCode);
                 final WritableMap params = Arguments.createMap();
+                params.putString("oauth_code", "" + resp.oauthCode);
+                params.putString("uId", "" + resp.uId);
                 successCallback.invoke(params);
             }
 
             @Override
             public void onAuthenError(int errorCode, String errorMsg) {
                 Log.println(Log.DEBUG, "FacebookAuthen", new StringBuilder().append(errorCode).append(errorMsg).toString());
-                final WritableMap params = Arguments.createMap();
-                failureCallback.invoke(params);
+                final WritableMap err = Arguments.createMap();
+                err.putInt("error_code", errorCode);
+                err.putString("error_message", errorMsg);
+                failureCallback.invoke(err);
             }
         };
-        this.mAuthExt.authenticateWithFacebook(this.mReactContext.getCurrentActivity(), listener );
+        this.mReactContext.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                mAuthExt.authenticateWithFacebook(mReactContext.getCurrentActivity(), listener);
+            }
+        });
     }
 
     @ReactMethod
     public void login(final Promise promise) {
         this.mSDk.unAuthenticate();
         this.mSDk.authenticate(this.mReactContext.getCurrentActivity(), LoginVia.APP_OR_WEB, new IAuthenticateCompleteListener() {
-
+            @Override
+            public void onAuthenticateError(int errCode, @Nullable String errMsg, @NotNull ErrorResponse errorResponse) {
+                final String code = errCode + "";
+                promise.reject(code, errMsg);
+            }
+            @Override
+            public void onAuthenticateError(int errorCode, @NotNull String message) {
+                final String code = errorCode + "";
+                promise.reject(code, message);
+            }
             @Override
             public void onAuthenticateSuccess(long uid, @NotNull String oauthCode, @NotNull Map<String, ?> data) {
                 final WritableMap params = Arguments.createMap();
@@ -139,48 +164,61 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
                 mOpenAPI = new ZaloOpenApi(mReactContext, oauthCode);
                 promise.resolve(params);
             }
-
-            @Override
-            public void onAuthenticateError(int errorCode, @NotNull String message) {
-                final String code = errorCode + "";
-                promise.reject(code, message);
-            }
         });
     }
 
     @ReactMethod
-    public void loginWithType(int type, final Callback successCallback, final Callback errorCallback) {
-        LoginVia login_type = LoginVia.APP_OR_WEB;
-        switch (type) {
-            case 1:
-                login_type = LoginVia.APP;
-                break;
-            case 2:
-                login_type = LoginVia.WEB;
-                break;
-        }
-        this.mSDk.authenticate(this.mReactContext.getCurrentActivity(), login_type, new IAuthenticateCompleteListener() {
+    public void loginWithType(final int type, final Callback successCallback,
+                              final Callback errorCallback) {
 
+        this.mReactContext.runOnUiQueueThread(new Runnable() {
             @Override
-            public void onAuthenticateSuccess(long uid, @NotNull String oauthCode, @NotNull Map<String, ?> data) {
-                final WritableMap params = Arguments.createMap();
-                params.putString("uId", "" + uid);
-                params.putString("oauth_code", "" + oauthCode);
-                for (Map.Entry<String, ?> entry : data.entrySet()) {
-                    params.putString(entry.getKey(), String.valueOf(entry.getValue()));
+            public void run() {
+                LoginVia login_type = LoginVia.APP_OR_WEB;
+                switch (type) {
+                    case 1:
+                        login_type = LoginVia.APP;
+                        break;
+                    case 2:
+                        login_type = LoginVia.WEB;
+                        break;
                 }
-                mOpenAPI = new ZaloOpenApi(mReactContext, oauthCode);
-                successCallback.invoke(params);
-            }
-
-            @Override
-            public void onAuthenticateError(int errorCode, @NotNull String message) {
-                final WritableMap err = Arguments.createMap();
-                err.putInt("error_code", errorCode);
-                err.putString("error_message", message);
-                errorCallback.invoke(err);
+                mSDk.authenticate(mReactContext.getCurrentActivity(), login_type, new IAuthenticateCompleteListener() {
+                    @Override
+                    public void onAuthenticateError(int errCode, @NotNull String errMessage) {
+                        try {
+                            final WritableMap err = Arguments.createMap();
+                            err.putInt("error_code", errCode);
+                            err.putString("error_message", errMessage);
+                            errorCallback.invoke(err);
+                        } catch (Exception ignored) {
+                        }
+                    }
+                    @Override
+                    public void onAuthenticateError(int errCode, @Nullable String errMessage, @NotNull ErrorResponse errorResponse) {
+                        try {
+                            final WritableMap err = Arguments.createMap();
+                            err.putInt("error_code", errCode);
+                            err.putString("error_message", errMessage);
+                            errorCallback.invoke(err);
+                        } catch (Exception ignored) {
+                        }
+                    }
+                    @Override
+                    public void onAuthenticateSuccess(long uid, @NotNull String oauthCode, @NotNull Map<String, ?> data) {
+                        final WritableMap params = Arguments.createMap();
+                        params.putString("uId", "" + uid);
+                        params.putString("oauth_code", "" + oauthCode);
+                        for (Map.Entry<String, ?> entry : data.entrySet()) {
+                            params.putString(entry.getKey(), String.valueOf(entry.getValue()));
+                        }
+                        mOpenAPI = new ZaloOpenApi(mReactContext, oauthCode);
+                        successCallback.invoke(params);
+                    }
+                });
             }
         });
+
     }
 
     @ReactMethod
@@ -194,33 +232,57 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
 
     @ReactMethod
     public void RegisterZalo(final Callback successCallback, final Callback errorCallback) {
-        this.mSDk.registerZalo(this.mReactContext.getCurrentActivity(), new IAuthenticateCompleteListener() {
+        this.mReactContext.runOnUiQueueThread(new Runnable() {
             @Override
-            public void onAuthenticateSuccess(long uid, @NotNull String oauth_code, @NotNull Map<String, ?> data) {
-                WritableMap params = Arguments.createMap();
-                params.putString("uId", "" + uid);
-                params.putString("oauth_code", "" + oauth_code);
-                for (Map.Entry<String, ?> entry : data.entrySet()) {
-                    params.putString(entry.getKey(), String.valueOf(entry.getValue()));
-                }
-                mOpenAPI = new ZaloOpenApi(mReactContext, oauth_code);
-                successCallback.invoke(params);
-            }
+            public void run() {
+                mSDk.registerZalo(mReactContext.getCurrentActivity(), new IAuthenticateCompleteListener() {
+                    @Override
+                    public void onAuthenticateError(int errCode, @Nullable String errMsg, @NotNull ErrorResponse errorResponse) {
+                        try {
+                            WritableMap params = Arguments.createMap();
+                            params.putInt("error_code", errCode);
+                            params.putString("error_message", errMsg);
+                            errorCallback.invoke(params);
+                        } catch (Exception ignored) {
 
-            @Override
-            public void onAuthenticateError(int i, @NotNull String s) {
+                        }
+                    }
 
-                WritableMap params = Arguments.createMap();
-                params.putInt("error_code", i);
-                params.putString("error_message", s);
-                errorCallback.invoke(params);
+                    @Override
+                    public void onAuthenticateSuccess(long uid, @NotNull String oauth_code, @NotNull Map<String, ?> data) {
+                        try {
+                            WritableMap params = Arguments.createMap();
+                            params.putString("uId", "" + uid);
+                            params.putString("oauth_code", "" + oauth_code);
+                            for (Map.Entry<String, ?> entry : data.entrySet()) {
+                                params.putString(entry.getKey(), String.valueOf(entry.getValue()));
+                            }
+                            mOpenAPI = new ZaloOpenApi(mReactContext, oauth_code);
+                            successCallback.invoke(params);
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onAuthenticateError(int errCode, @NotNull String errMsg) {
+                        try {
+                            WritableMap params = Arguments.createMap();
+                            params.putInt("error_code", errCode);
+                            params.putString("error_message", errMsg);
+                            errorCallback.invoke(params);
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+                });
             }
         });
-
     }
 
     @ReactMethod
-    public void CheckZaloLoginStatus(final Callback successCallback, final Callback errorCallback) {
+    public void CheckZaloLoginStatus(final Callback successCallback,
+                                     final Callback errorCallback) {
         this.mSDk.getZaloLoginStatus(new GetZaloLoginStatus() {
             @Override
             public void onGetZaloLoginStatusCompleted(int status) {
@@ -293,7 +355,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int sendOfficalAccontMassageWith(String id, String data, Callback successCallback, Callback errorCallback) {
+    public int sendOfficalAccontMassageWith(String id, String data, Callback
+            successCallback, Callback errorCallback) {
         final WritableMap err = Arguments.createMap();
         err.putString("error_message", "RNZaloSDK not suppport for android");
         errorCallback.invoke(err);
@@ -301,7 +364,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int sendMessageTo(String friend_id, String message, String link, final Callback successCallback, final Callback errorCallback) {
+    public int sendMessageTo(String friend_id, String message, String link,
+                             final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -326,7 +390,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int sendAppRequestTo(String friend_id, String message, final Callback successCallback, final Callback errorCallback) {
+    public int sendAppRequestTo(String friend_id, String message,
+                                final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -351,7 +416,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int postFeedWithMessage(String message, String link, final Callback successCallback, final Callback errorCallback) {
+    public int postFeedWithMessage(String message, String link,
+                                   final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -376,7 +442,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int getUserFriendListAtOffset(int start, int count, final Callback successCallback, final Callback errorCallback) {
+    public int getUserFriendListAtOffset(int start, int count,
+                                         final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -405,7 +472,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int getUserInvitableFriendListAtOffset(int start, int count, final Callback successCallback, final Callback errorCallback) {
+    public int getUserInvitableFriendListAtOffset(int start, int count,
+                                                  final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -436,7 +504,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int shareMessage(String message, String app_name, String link, ReadableMap dict_others, final Callback successCallback, final Callback errorCallback) {
+    public int shareMessage(String message, String app_name, String link, ReadableMap
+            dict_others, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -469,7 +538,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int shareFeed(String message, String app_name, String link, ReadableMap dict_others, final Callback successCallback, final Callback errorCallback) {
+    public int shareFeed(String message, String app_name, String link, ReadableMap
+            dict_others, final Callback successCallback, final Callback errorCallback) {
         if (this.mOpenAPI == null) {
             final WritableMap err = Arguments.createMap();
             err.putString("error_message", "Not authentication");
@@ -502,7 +572,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int getSettings(ReadableMap params, final Callback successCallback, final Callback errorCallback) {
+    public int getSettings(ReadableMap params, final Callback successCallback,
+                           final Callback errorCallback) {
         try {
             SettingsManager mgr = SettingsManager.Companion.getInstance();
             WritableMap result = Arguments.createMap();
@@ -511,7 +582,7 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
             result.putDouble("expire_date", mgr.getExpiredTime());
             result.putBoolean("is_use_webview_login_zalo", mgr.isUseWebViewLoginZalo());
             result.putString("sdk_version", AppInfo.getInstance().getSDKVersion());
-            result.putString("app_id", getReactApplicationContext().getString(R.string.appID));
+            // result.putString("app_id", getReactApplicationContext().getString(R.string.appID));
             successCallback.invoke(result);
         } catch (Exception ex) {
             final WritableMap err = Arguments.createMap();
@@ -523,7 +594,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public int getDeviceID(ReadableMap params, final Callback successCallback, final Callback errorCallback) {
+    public int getDeviceID(ReadableMap params, final Callback successCallback,
+                           final Callback errorCallback) {
         try {
             DeviceTracking devcie_tracking = DeviceTracking.Companion.getInstance();
             WritableMap result = Arguments.createMap();
@@ -544,7 +616,8 @@ public class RNZaloModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @Override
-    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent
+            data) {
         this.mSDk.onActivityResult(activity, requestCode, requestCode, data);
     }
 

@@ -24,7 +24,7 @@ const PluginsScreen = props => {
         if (err.error_code === -1024) {
             Alert.alert('Để dùng tính năng này cần phải install app Zalo ');
         }
-        setState({ ...state, err });
+        setState({ ...state, err, result: err });
     };
 
     const { buttonStyle, textStyle } = styles;
@@ -106,7 +106,7 @@ const PluginsScreen = props => {
                         const { data } = state;
                         RNZaloSDK.shareMessage(data.message, 'ZaloSDK Demo', data.link, data)
                             .then(d => {
-                                setState({ ...d, err: null });
+                                setState({ ...state, ...d, err: null, result: d });
                             })
                             .catch(err => {
                                 onError(err);
@@ -123,7 +123,7 @@ const PluginsScreen = props => {
                         const { data } = state;
                         RNZaloSDK.shareFeed(data.message, 'ZaloSDK Demo', data.link, data)
                             .then(d => {
-                                setState({ ...state, ...d, err: null });
+                                setState({ ...state, ...d, err: null, result: d });
                             })
                             .catch(err => {
                                 onError(err);
@@ -132,7 +132,7 @@ const PluginsScreen = props => {
                 >
                     <Text style={textStyle}>Shared Feed</Text>
                 </TouchableOpacity>
-                <LogStateView state={state} />
+                <LogStateView state={state.result} />
             </ScrollView>
         </View>
     );

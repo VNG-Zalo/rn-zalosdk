@@ -41,7 +41,8 @@ class RNZaloSDK {
   }
 
   // type: 0 - web or app, 1 - app, 2 - web
-  static login(type: LoginType = LoginType.AppOrWeb) {
+  //static login(type: LoginType = LoginType.AppOrWeb) {
+  static login(type = LoginType.AppOrWeb) {
     return new Promise((resolve, reject) => {
       console.log("call login with type");
       RNZalo.loginWithType(
@@ -56,9 +57,35 @@ class RNZaloSDK {
     });
   }
 
-  static startExtOauth() {
+  static startLoginForm() {
     return new Promise((resolve, reject) => {
-      RNZalo.start_ext_oauth(
+      RNZalo.start_login_form(
+        (data) => {
+          resolve(data);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  static startAuthenGooglePlus() {
+    return new Promise((resolve, reject) => {
+      RNZalo.start_oauth_google(
+        (data) => {
+          resolve(data);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  static startAuthenFacebook() {
+    return new Promise((resolve, reject) => {
+      RNZalo.start_oauth_facebook(
         (data) => {
           resolve(data);
         },

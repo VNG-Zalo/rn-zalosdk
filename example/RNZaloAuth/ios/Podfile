@@ -8,7 +8,13 @@ workspace 'RNZaloAuth'
 target 'RNZaloAuth' do
   project 'RNZaloAuth'
   
-  pod 'ZaloSDK'
+  pod 'ZaloSDK', :subspecs => [
+    'Pixel',
+    'Analytics'
+  ]
+  
+  pod 'Firebase/Analytics'
+  # add pods for any other des
 
   pod 'React', :path => '../node_modules/react-native/' 
   pod 'React-Core', :path => '../node_modules/react-native', :subspecs => [

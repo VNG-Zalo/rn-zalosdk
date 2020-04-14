@@ -5,4 +5,5 @@
     <application>
         <activity android:name="rnzalo.ExtLoginActivity" />
     </application>
+
 </manifest>

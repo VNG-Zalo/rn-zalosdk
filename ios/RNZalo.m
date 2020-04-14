@@ -67,6 +67,54 @@ RCT_EXPORT_METHOD(loginWithType:(NSInteger) type
 }
 
 
+RCT_EXPORT_METHOD(start_oauth_google: (RCTResponseSenderBlock) successCallback
+                  failedCallback: (RCTResponseSenderBlock) failureCallback)
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *presentedViewController = RCTPresentedViewController();
+
+        [[ZaloSDK sharedInstance] authenticateGoogleInController:presentedViewController
+                                                         handler:^(ZOOauthResponseObject *response) {
+            if([response isSucess]) {
+                NSString * oauthCode = response.oauthCode;
+                successCallback(@[@{ @"oauth_code": oauthCode}]);
+            } else {
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage,
+                    }
+                ]);
+            }
+        }];
+    });
+    return;
+}
+
+RCT_EXPORT_METHOD(start_oauth_facebook: (RCTResponseSenderBlock) successCallback
+                  failedCallback: (RCTResponseSenderBlock) failureCallback)
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *presentedViewController = RCTPresentedViewController();
+
+        [[ZaloSDK sharedInstance] authenticateFacebookInController:presentedViewController
+                                             withCompletionHandler:^(ZOOauthResponseObject *response) {
+            if([response isSucess]) {
+                NSString * oauthCode = response.oauthCode;
+                successCallback(@[@{ @"oauth_code": oauthCode}]);
+            } else {
+                failureCallback(@[
+                    @{
+                        @"error_code": @(response.errorCode),
+                        @"error_message": response.errorMessage,
+                    }
+                ]);
+            }
+        }];
+    });
+    return;
+}
+
 
 RCT_EXPORT_METHOD(logout:(RCTResponseSenderBlock)successCallback) {
     [[ZaloSDK sharedInstance] unauthenticate];

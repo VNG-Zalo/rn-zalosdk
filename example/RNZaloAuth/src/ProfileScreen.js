@@ -10,7 +10,7 @@ const ProfileScreen = props => {
         if (err.error_message === 'Not authentication') {
             Alert.alert('Ngưởi dùng chưa login.\nHãy vào Oauth > Login Login Zalo');
         }
-        setState(old_state => ({ ...old_state, err }));
+        setState(old_state => ({ ...old_state, err, result: err }));
     };
 
     const { buttonStyle, textStyle } = styles;
@@ -35,7 +35,7 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.getProfile()
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, ...data, err: null, result: data }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -51,7 +51,7 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.getUserFriendListAtOffset(0, 999)
                             .then(data => {
-                                setState(old_state => ({ ...old_state, data, err: null }));
+                                setState(old_state => ({ ...old_state, data, err: null, result: data }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -75,7 +75,7 @@ const ProfileScreen = props => {
                             'https://developers.zalo.me/',
                         )
                             .then(data => {
-                                setState(old_state => ({ ...old_state, ...data, err: null }));
+                                setState(old_state => ({ ...old_state, ...data, err: null, result: data }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -91,7 +91,7 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.getUserInvitableFriendListAtOffset(0, 20)
                             .then(data => {
-                                setState(old_state => ({ ...old_state, data, err: null }));
+                                setState(old_state => ({ ...old_state, data, err: null, result: data }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -111,7 +111,12 @@ const ProfileScreen = props => {
                         }
                         RNZaloSDK.sendAppRequestTo(state.data.data[0].id, 'Hello, use this app with me !!')
                             .then(data => {
-                                setState(old_state => ({ ...old_state, invite_friend_used_app: data, err: null }));
+                                setState(old_state => ({
+                                    ...old_state,
+                                    invite_friend_used_app: data,
+                                    err: null,
+                                    result: data,
+                                }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -131,7 +136,7 @@ const ProfileScreen = props => {
                         }
                         RNZaloSDK.sendOfficalAccountMessageWith(state.data.data[0].id, {})
                             .then(data => {
-                                setState(old_state => ({ ...old_state, send_msg_oa: data, err: null }));
+                                setState(old_state => ({ ...old_state, send_msg_oa: data, err: null, result: data }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -147,7 +152,7 @@ const ProfileScreen = props => {
                     onPress={() => {
                         RNZaloSDK.postFeedWithMessage('Post from react native sdk', 'https://developers.zalo.me')
                             .then(data => {
-                                setState(old_state => ({ ...old_state, post_to_wall: data, err: null }));
+                                setState(old_state => ({ ...old_state, post_to_wall: data, err: null, result: data }));
                             })
                             .catch(err => {
                                 onError(err);
@@ -156,7 +161,7 @@ const ProfileScreen = props => {
                 >
                     <Text style={textStyle}>Post To Wall</Text>
                 </TouchableOpacity>
-                <LogStateView state={state} />
+                <LogStateView state={state.result} />
             </ScrollView>
         </View>
     );

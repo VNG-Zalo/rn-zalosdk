@@ -9,7 +9,7 @@
         "reset": "npx react-native start --reset-cache",
         "test": "npx jest",
         "lint": "npx eslint .",
-        "clean": "watchman watch-del-all && rm -rf node_modules && npx yarn cache clean && npx yarn install",
+        "clean": "watchman watch-del-all && rm -rf node_modules && npx yarn cache clean && npx npm install",
         "clean_ios": "cd ios && rm -rf Pods && rm -f Podfile.lock && rm -rf RNZaloAuth.xcworkspace && npx pod install && open RNZaloAuth.xcworkspace",
         "pretty": "prettier --write \"src/**/*.js\"",
         "build:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",

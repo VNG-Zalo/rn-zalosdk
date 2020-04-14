@@ -173,7 +173,7 @@ const MainScreen = props => {
         if (err === 'Not authentication') {
             Alert.alert('Ngưởi dùng chưa login.\nHãy vào Oauth > Login Login Zalo');
         }
-        setState(old_state => ({ ...old_state, err, loading: false }));
+        setState({ ...state, err, loading: false });
     };
 
     useEffect(() => {

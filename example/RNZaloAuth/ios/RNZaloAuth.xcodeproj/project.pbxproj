@@ -13,6 +13,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		AD09A73B380CE4D07711CC72 /* libPods-RNZaloAuth.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D3B6643B26272E1B14414C /* libPods-RNZaloAuth.a */; };
+		CCC28F0B244010F90023A662 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCC28F0A244010F80023A662 /* GoogleService-Info.plist */; };
 		D1CDCD68BBF1DAE99132E7E8 /* libPods-RNZaloAuthTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A87C404099E96E686501862C /* libPods-RNZaloAuthTests.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
@@ -43,6 +44,8 @@
 		9586DBD5B4F0488DE0C072E3 /* Pods-RNZaloAuthTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNZaloAuthTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNZaloAuthTests/Pods-RNZaloAuthTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A87C404099E96E686501862C /* libPods-RNZaloAuthTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNZaloAuthTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4D59DE3B22F1E557968CD4E /* Pods-RNZaloAuth.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNZaloAuth.release.xcconfig"; path = "Pods/Target Support Files/Pods-RNZaloAuth/Pods-RNZaloAuth.release.xcconfig"; sourceTree = "<group>"; };
+		CCC28F0A244010F80023A662 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "RNZaloAuth/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CCC28F0C244022A40023A662 /* RNZaloAuth.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = RNZaloAuth.entitlements; path = RNZaloAuth/RNZaloAuth.entitlements; sourceTree = "<group>"; };
 		DA7E5D5EE1D625BEA434A4D2 /* Pods-RNZaloAuth.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNZaloAuth.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNZaloAuth/Pods-RNZaloAuth.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -91,6 +94,8 @@
 		13B07FAE1A68108700A75B9A /* RNZaloAuth */ = {
 			isa = PBXGroup;
 			children = (
+				CCC28F0C244022A40023A662 /* RNZaloAuth.entitlements */,
+				CCC28F0A244010F80023A662 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -105,7 +110,6 @@
 		1EA87619225C77340058C995 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				B8C3F7CF72B74D4BB9B50BE5 /* libRNZalo.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -238,8 +242,6 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* RNZaloAuth */,
@@ -247,9 +249,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
@@ -265,6 +264,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				CCC28F0B244010F90023A662 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,9 +392,7 @@
 				INFOPLIST_FILE = RNZaloAuthTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -424,9 +422,7 @@
 				INFOPLIST_FILE = RNZaloAuthTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -457,7 +453,7 @@
 					"$(inherited)",
 					"-lstdc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.RNZaloAuth;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.com.vng.zmusicstore2;
 				PRODUCT_NAME = RNZaloAuth;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -480,7 +476,7 @@
 					"$(inherited)",
 					"-lstdc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.RNZaloAuth;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.com.vng.zmusicstore2;
 				PRODUCT_NAME = RNZaloAuth;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

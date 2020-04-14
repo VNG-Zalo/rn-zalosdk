@@ -31,7 +31,7 @@ const OauthScreen = props => {
         } else {
             ShowToast(err.error_message ? err.error_message : 'Unknown error');
         }
-        setState({ ...state, err });
+        setState({ ...state, err, result: err });
     };
     return (
         <LoginProvider>
@@ -52,7 +52,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.login(LoginType.App)
                                 .then(data => {
-                                    setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    setState(old_state => ({ ...old_state, ...data, result: data, err: null }));
                                     ShowToast('Login successed');
                                 })
                                 .catch(err => {
@@ -70,7 +70,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.login(LoginType.Web)
                                 .then(data => {
-                                    setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    setState(old_state => ({ ...old_state, ...data, result: data, err: null }));
                                     ShowToast('Login successed');
                                 })
                                 .catch(err => {
@@ -88,7 +88,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.login()
                                 .then(data => {
-                                    setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    setState(old_state => ({ ...old_state, ...data, result: data, err: null }));
                                     ShowToast('Login successed');
                                 })
                                 .catch(err => {
@@ -106,7 +106,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.startLoginForm()
                                 .then(data => {
-                                    setState({ ...state, ...data, err: null });
+                                    setState({ ...state, ...data, err: null, result: data });
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -123,7 +123,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.startAuthenGooglePlus()
                                 .then(data => {
-                                    setState({ ...state, ...data, err: null });
+                                    setState({ ...state, ...data, err: null, result: data });
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -140,7 +140,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.startAuthenFacebook()
                                 .then(data => {
-                                    setState({ ...state, ...data, err: null });
+                                    setState({ ...state, ...data, err: null, result: data });
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -157,7 +157,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.registerZalo()
                                 .then(data => {
-                                    setState({ ...state, ...data, err: null });
+                                    setState({ ...state, ...data, err: null, result: data });
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -174,7 +174,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.isAuthenticate()
                                 .then(data => {
-                                    setState(old_state => ({ ...old_state, ...data, err: null }));
+                                    setState(old_state => ({ ...old_state, ...data, err: null, result: data }));
                                     ShowToast('Validate successed');
                                 })
                                 .catch(err => {
@@ -192,7 +192,7 @@ const OauthScreen = props => {
                         onPress={() => {
                             RNZaloSDK.checkZaloLoginStatus()
                                 .then(data => {
-                                    setState({ ...state, ...data, err: null });
+                                    setState({ ...state, ...data, result: data, err: null });
                                 })
                                 .catch(err => {
                                     onError(err);
@@ -201,7 +201,7 @@ const OauthScreen = props => {
                     >
                         <Text style={textStyle}>Check App Zalo login</Text>
                     </TouchableOpacity>
-                    <LogStateView state={state} />
+                    <LogStateView state={state.result} />
                 </ScrollView>
             </View>
         </LoginProvider>

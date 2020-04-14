@@ -194,10 +194,10 @@ android {
 }
 
 dependencies {
-    def sdkVersion = "2.5.0401"
+    def sdkVersion = "2.5.0410"
     implementation "com.zing.zalo.zalosdk.kotlin:core:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:auth:$sdkVersion"
-    implementation "com.zing.zalo.zalosdk.kotlin:authext:2.5.0407"
+    implementation "com.zing.zalo.zalosdk.kotlin:authext:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:openapi:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:analytics:$sdkVersion"
 

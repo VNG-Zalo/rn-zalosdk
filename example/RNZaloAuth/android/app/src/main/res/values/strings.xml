@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Zalo Login</string>
-    <string name="appID">1829577289837795818</string>
-    <string name="zalosdk_login_protocol_schema">zalo-1829577289837795818</string>
+    <string name="zalosdk_login_protocol_schema" 		translatable="false">zalo-1829577289837795818</string>
+    <string name="appID" translatable="false">1829577289837795818</string>
+    <string name="preloadChannel" translatable="false">OPPODATA</string>
+    <string name="facebook_appid" translatable="false">789039914458492</string>
 </resources>
