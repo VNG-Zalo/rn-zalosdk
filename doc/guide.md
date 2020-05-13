@@ -5,7 +5,8 @@
 - [Tích hợp](#t%c3%adch-h%e1%bb%a3p)
     - [Tạo ứng dụng trên trang developer của Zalo](#t%e1%ba%a1o-%e1%bb%a9ng-d%e1%bb%a5ng-tr%c3%aan-trang-developer-c%e1%bb%a7a-zalo)
     - [Cài đặt](#c%c3%a0i-%c4%91%e1%ba%b7t)
-    - [Khởi tạo RNZaloSDK](#kh%e1%bb%9fi-t%e1%ba%a1o-rnzalosdk)
+      - [iOS](#ios)
+      - [Android](#android)
 - [Login](#login)
   - [Đăng nhập bằng Zalo](#%c4%90%c4%83ng-nh%e1%ba%adp-b%e1%ba%b1ng-zalo)
   - [Xác minh lại oauth code](#x%c3%a1c-minh-l%e1%ba%a1i-oauth-code)
@@ -43,12 +44,65 @@ RNZaloSDK là bộ thư viện để các ứng dụng có thể tương tác v�
 
 ### Cài đặt 
 Chạy lệnh để tải về RNZaloSDK
+
 ```shell
 npm install rnzalosdk --save
 ```
 
-### Khởi tạo RNZaloSDK
-SDK cung cấp API để setup app id
+#### iOS
+- thêm URL Type `Main target setting -> info -> URL types -> click +`
+  
+  `identifier = “zalo”, URL Schemes = “zalo-<YOUR_APP_ID>”`
+
+- Mở file AppDelegate.m`
+
+    ```Objective-C
+    ...
+    #import <ZaloSDK/ZaloSDK.h>
+    - (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+        ...
+        [[ZaloSDK sharedInstance] initializeWithAppId:@"<YOUR_APP_ID>"];
+        return YES;
+    }
+    
+    - (BOOL)application:(UIApplication *)application 
+        openURL:(NSURL *)url
+        sourceApplication:(NSString *)sourceApplication
+        annotation:(id)annotation {
+    
+        return [[ZDKApplicationDelegate sharedInstance] 
+        application:application
+        openURL:url sourceApplication:sourceApplication annotation:annotation];
+    }
+    ```
+
+#### Android
+- thêm appId vào `android/app/src/main/res/values/strings.xml`
+
+    ```xml
+    <resources>
+        <string name="app_name">App Name</string>
+        <string name="appID"><YOUR_APP_ID></string>
+    </res>
+    ```
+- thêm code ở dưới vào `android/app/src/main/res/AndroidManifest.xml`
+
+    ```xml
+    <application
+        ...
+        <meta-data
+            android:name="com.zing.zalo.zalosdk.appID"
+            android:value="@string/appID" />
+
+        <activity
+            android:name="com.zing.zalo.zalosdk.oauth.WebLoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="sensor"
+            android:theme="@style/FixThemeForLoginWebview"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"></activity>
+    </application>
+    ```
 
 # Login
  
