@@ -6,6 +6,7 @@
 
 `$ npm install rn-zalo --save`
 
+### [For more details](./doc/guide.md)
 ### Zalo SDK Documents
 - iOS: https://developers.zalo.me/docs/sdk/ios-sdk-9
 - Android: https://developers.zalo.me/docs/sdk/android-sdk-8
@@ -222,4 +223,3 @@ const styles = StyleSheet.create({
   },
 });
 ```
-  
