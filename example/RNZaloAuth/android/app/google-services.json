@@ -40,10 +40,10 @@
               "client_type": 3
             },
             {
-              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_id": "23729135720-e4u7jk4lo821ambogtlhope9u9krgbd0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+                "bundle_id": "vn.vng.zalo.media.RNZaloAuth"
               }
             }
           ]
@@ -52,12 +52,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:23729135720:android:dd499bb0b779e1bb4ddbdd",
+        "mobilesdk_app_id": "1:23729135720:android:7386216d974deefb4ddbdd",
         "android_client_info": {
           "package_name": "com.rnzaloauth"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "23729135720-uvlki75ds5ufrqormmdj6885b4u08a8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rnzaloauth",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "23729135720-f3r0mk6tc6u45th53uphmefa1ts7vac4.apps.googleusercontent.com",
           "client_type": 3
@@ -76,10 +84,10 @@
               "client_type": 3
             },
             {
-              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_id": "23729135720-e4u7jk4lo821ambogtlhope9u9krgbd0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+                "bundle_id": "vn.vng.zalo.media.RNZaloAuth"
               }
             }
           ]
@@ -112,10 +120,10 @@
               "client_type": 3
             },
             {
-              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_id": "23729135720-e4u7jk4lo821ambogtlhope9u9krgbd0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+                "bundle_id": "vn.vng.zalo.media.RNZaloAuth"
               }
             }
           ]
@@ -164,10 +172,10 @@
               "client_type": 3
             },
             {
-              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_id": "23729135720-e4u7jk4lo821ambogtlhope9u9krgbd0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+                "bundle_id": "vn.vng.zalo.media.RNZaloAuth"
               }
             }
           ]
@@ -200,10 +208,10 @@
               "client_type": 3
             },
             {
-              "client_id": "23729135720-36ukn9m4bc3k5sghjbdmskf6qhrctrpl.apps.googleusercontent.com",
+              "client_id": "23729135720-e4u7jk4lo821ambogtlhope9u9krgbd0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.zing.zalo.zrtc.ios.demo3"
+                "bundle_id": "vn.vng.zalo.media.RNZaloAuth"
               }
             }
           ]

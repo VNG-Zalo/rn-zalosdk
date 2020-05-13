@@ -27,7 +27,6 @@
             android:name="com.zing.zalo.sdk.preloadChannel"
             android:value="@string/preloadChannel" />
 
-
         <meta-data
             android:name="com.zing.zalo.zalosdk.appID"
             android:value="@string/appID" />

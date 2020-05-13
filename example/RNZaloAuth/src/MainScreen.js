@@ -53,6 +53,7 @@ const ButtonLogged = props => {
                 user: {},
                 oauth_code: null,
                 loading: false,
+                result: null,
             });
         };
     }, [state.oauth_code]);

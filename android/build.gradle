@@ -46,7 +46,7 @@ repositories {
 }
 
 dependencies {
-    def sdkVersion = "2.5.0410"
+    def sdkVersion = "2.5.0422"
     implementation "com.zing.zalo.zalosdk.kotlin:core:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:auth:$sdkVersion"
     implementation "com.zing.zalo.zalosdk.kotlin:authext:$sdkVersion"
